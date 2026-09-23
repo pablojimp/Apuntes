@@ -11,11 +11,12 @@ import java.nio.file.Path;
 // Comprueba: ejecuta el programa dos veces. Después escribe
 public class PrepararCarpetas {
     public static void main(String[] args) {
-        Path datos = Path.of("datos");
+        Path datos = Path.of("datos","copias");
+        Path datosClubes = Path.of("datos","clubes.txt");
         Path copias = datos.resolve("copias");
         try {
             Files.createDirectories(datos.getParent());
-            Files.createDirectories(copias.getParent());
+            Files.createDirectories(copias);
         } catch (Exception e) {
             System.err.println("No se pudo guardar: " + e.getMessage());
         }
