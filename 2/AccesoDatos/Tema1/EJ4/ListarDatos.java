@@ -1,4 +1,3 @@
-package EJ4;
 // Desarrolla una clase ListarDatos que muestre solo los archivos ordinarios que hay directamente dentro
 
 import java.nio.file.DirectoryStream;
@@ -14,7 +13,7 @@ import java.nio.file.Path;
 // únicamente el nombre de cada archivo.
 // Comprueba: coloca dos archivos y una subcarpeta en datos . Deben mostrarse los dos archivos, no la
 // carpeta. 
-// Gestiona también el caso en el que datos no exista.
+// Gestiona también el caso en el que datos no exista.F
 public class ListarDatos {
     public static void main(String[] args) {
         Path ruta = Path.of("datos");
@@ -29,7 +28,7 @@ public class ListarDatos {
                 System.err.println("Error: " + e.getMessage());
             }
 
-        }else{
+        } else {
             System.out.println("La ruta actual no existe");
         }
     }

@@ -1,4 +1,3 @@
-package EJ2;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,19 +20,18 @@ public class PrepararCarpetas {
 
             if (!Files.exists(clubes)) {
                 Files.createFile(clubes);
-            }else{
+            } else {
                 System.out.println("Ya existe clubes.txt");
             }
 
             if (!Files.exists(respaldo)) {
                 Files.createFile(respaldo);
-            }else{
+            } else {
                 System.out.println("Ya existe respaldo.txt");
             }
 
-
-            System.out.println("Tamaño clubes.txt = "+Files.size(clubes));
-            System.out.println("Tamaño respaldo.txt = "+Files.size(respaldo));
+            System.out.println("Tamaño clubes.txt = " + Files.size(clubes));
+            System.out.println("Tamaño respaldo.txt = " + Files.size(respaldo));
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
