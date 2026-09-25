@@ -1,4 +1,3 @@
-package EJ1;
 
 import java.nio.file.Path;
 

@@ -17,11 +17,17 @@ import java.nio.file.Path;
 public class ListarDatos {
     public static void main(String[] args) {
         Path ruta = Path.of("datos");
+        
         if (Files.isDirectory(ruta)) {
+
             try (DirectoryStream<Path> elementos = Files.newDirectoryStream(ruta);) {
+
                 for (Path elemento : elementos) {
+
                     if (Files.isRegularFile(elemento)) {
+
                         System.out.println(elemento.getFileName());
+
                     }
                 }
             } catch (Exception e) {

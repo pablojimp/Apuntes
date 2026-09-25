@@ -11,9 +11,12 @@ import java.nio.file.Path;
 // Comprueba: ejecuta el programa dos veces. Después escribe
 public class PrepararCarpetas {
     public static void main(String[] args) {
+
         Path rutaInicial = Path.of("datos", "copias");
         Path respaldo = rutaInicial.resolve("respaldo.txt");
         Path clubes = rutaInicial.getParent().resolve("clubes.txt");
+
+        
         try {
             Files.createDirectories(rutaInicial.getParent());
             Files.createDirectories(rutaInicial);
