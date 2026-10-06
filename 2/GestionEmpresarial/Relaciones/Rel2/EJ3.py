@@ -7,7 +7,7 @@ subtotal = precio * cantidad
 importeDescuento = subtotal * descuento / 100
 total = subtotal - importeDescuento
 
-print(f"\nProducto: {nombre}")
-print(f"Subtotal: {subtotal:.2f} €")
-print(f"Descuento: {importeDescuento:.2f} €")
-print(f"Total: {total:.2f} €")
+print(f"Producto: {nombre}")
+print(f"Subtotal: {subtotal} €")
+print(f"Descuento: {importeDescuento} €")
+print(f"Total: {total} €")
