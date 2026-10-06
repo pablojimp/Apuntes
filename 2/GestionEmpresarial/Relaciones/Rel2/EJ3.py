@@ -4,10 +4,10 @@ cantidad = int(input("Cantidad: "))
 descuento = float(input("Porcentaje de descuento: "))
 
 subtotal = precio * cantidad
-importe_descuento = subtotal * descuento / 100
-total = subtotal - importe_descuento
+importeDescuento = subtotal * descuento / 100
+total = subtotal - importeDescuento
 
 print(f"\nProducto: {nombre}")
 print(f"Subtotal: {subtotal:.2f} €")
-print(f"Descuento: {importe_descuento:.2f} €")
+print(f"Descuento: {importeDescuento:.2f} €")
 print(f"Total: {total:.2f} €")
