@@ -45,13 +45,13 @@ public class reservas {
 
                 if (encontrado) {
                     Files.write(ruta, actualizacion, StandardCharsets.UTF_8);
-                    System.out.println("Reserva Eliminada");
+                    System.err.println("Reserva Eliminada");
                 } else {
-                    System.out.println("No existe el id seleccionado.");
+                    System.err.println("No existe el id seleccionado.");
                 }
 
             } catch (Exception e) {
-                System.out.println("El ID introducido no es un numero entero. Ejemplos: 1, 77, 67");
+                System.err.println("El ID introducido no es un numero entero. Ejemplos: 1, 77, 67");
             }
 
         } catch (IOException e) {
