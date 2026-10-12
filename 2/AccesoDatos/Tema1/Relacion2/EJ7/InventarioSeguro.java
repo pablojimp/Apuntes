@@ -17,7 +17,7 @@ public class InventarioSeguro {
         String stockNuevo = null;
         Scanner scanner = new Scanner(System.in);
         boolean encontrado = false;
-        int id, stock;
+        int stock;
         boolean ejecutar = true;
         boolean sobreEscribir = true;
         String opcionMenu;
@@ -49,8 +49,6 @@ public class InventarioSeguro {
                     stockNuevo = scanner.nextLine();
 
                     try {
-                        id = Integer.parseInt(idBuscar);
-
                         stock = Integer.parseInt(stockNuevo);
 
                         for (String linea : originales) {

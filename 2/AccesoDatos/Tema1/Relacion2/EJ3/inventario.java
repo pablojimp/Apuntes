@@ -15,51 +15,50 @@ public class inventario {
         String stockNuevo = null;
         Scanner scanner = new Scanner(System.in);
         boolean encontrado = false;
-        int id, stock;
+        int stock;
 
         try {
 
             if (Files.notExists(ruta)) {
                 System.out.println("No existe el archivo de invetario.");
-                return;
-            }
 
-            List<String> originales = Files.readAllLines(
-                    ruta, StandardCharsets.UTF_8);
+            } else {
 
-            List<String> actualizacion = new ArrayList<>();
+                List<String> originales = Files.readAllLines(
+                        ruta, StandardCharsets.UTF_8);
 
-            System.out.print("Introduce un ID: ");
-            idBuscar = scanner.nextLine();
+                List<String> actualizacion = new ArrayList<>();
 
-            System.out.print("Introduce el nuevo Stock: ");
-            stockNuevo = scanner.nextLine();
+                System.out.print("Introduce un ID: ");
+                idBuscar = scanner.nextLine();
 
-            try {
-                id = Integer.parseInt(idBuscar);
+                System.out.print("Introduce el nuevo Stock: ");
+                stockNuevo = scanner.nextLine();
 
-                stock = Integer.parseInt(stockNuevo);
-                for (String linea : originales) {
-                    String[] campos = linea.split(";", -1);
-                    if (campos.length == 3 && campos[0].equals(idBuscar)) {
-                        actualizacion.add(campos[0] + ";" + campos[1] + ";" + stock);
-                        encontrado = true;
+                try {
+                    stock = Integer.parseInt(stockNuevo);
+                    for (String linea : originales) {
+                        String[] campos = linea.split(";", -1);
+                        if (campos.length == 3 && campos[0].equals(idBuscar)) {
+                            actualizacion.add(campos[0] + ";" + campos[1] + ";" + stock);
+                            encontrado = true;
+                        } else {
+                            actualizacion.add(linea);
+                        }
+                    }
+
+                    if (encontrado) {
+                        Files.write(ruta, actualizacion, StandardCharsets.UTF_8);
+                        System.out.println("Stock Actualizado");
                     } else {
-                        actualizacion.add(linea);
+                        System.out.println("No existe el id seleccionado.");
                     }
                 }
 
-                if (encontrado) {
-                    Files.write(ruta, actualizacion, StandardCharsets.UTF_8);
-                    System.out.println("Stock Actualizado");
-                } else {
-                    System.out.println("No existe el id seleccionado.");
+                catch (Exception e) {
+                    System.out.println("El ID o Stock nuevo introducido no es un numero entero. Ejemplos: 1, 77, 67");
                 }
-
-            } catch (Exception e) {
-                System.out.println("El ID o Stock nuevo introducido no es un numero entero. Ejemplos: 1, 77, 67");
             }
-
         } catch (IOException e) {
             System.err.println("No se pudo modificar: " + e.getMessage());
         }

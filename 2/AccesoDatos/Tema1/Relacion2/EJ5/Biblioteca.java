@@ -42,61 +42,59 @@ public class Biblioteca {
         String idBuscar = null;
         String nombreLibroNuevo = null;
         String autorLibroNuevo = null;
-        int id;
         boolean encontrado = false;
-        boolean nuevaLinea = true;
-
         try {
 
             if (Files.notExists(ruta)) {
                 System.out.println("No existe el archivo de invetario.");
-                return;
-            }
 
-            List<String> originales = Files.readAllLines(ruta, StandardCharsets.UTF_8);
-            List<String> nuevas = new ArrayList<>();
+            } else {
 
-            System.out.print("Introduce un ID: ");
-            idBuscar = scanner.nextLine();
+                List<String> originales = Files.readAllLines(ruta, StandardCharsets.UTF_8);
+                List<String> nuevas = new ArrayList<>();
 
-            try {
+                System.out.print("Introduce un ID: ");
+                idBuscar = scanner.nextLine();
 
-                id = Integer.parseInt(idBuscar);
-                for (String linea : originales) {
-                    String[] campos = linea.split(";", -1);
+                try {
 
-                    if (campos.length == 3 && campos[0].equals(idBuscar)) {
-                        encontrado = true;
-                    } else {
-                        nuevas.add(linea);
+                    for (String linea : originales) {
+                        String[] campos = linea.split(";", -1);
+
+                        if (campos.length == 3 && campos[0].equals(idBuscar)) {
+                            encontrado = true;
+                        } else {
+                            nuevas.add(linea);
+                        }
+
                     }
 
+                    if (encontrado) {
+                        System.err.println("El id a registrar ya lo tenemos insertado, no se han realizado cambios");
+
+                    } else {
+                        System.out.print("Introduce el nombre: ");
+                        nombreLibroNuevo = scanner.nextLine();
+
+                        System.out.print("Introduce un autor: ");
+                        autorLibroNuevo = scanner.nextLine();
+
+                        nuevas.add(idBuscar + ";" + nombreLibroNuevo + ";" + autorLibroNuevo);
+                        Files.write(ruta, nuevas, StandardCharsets.UTF_8);
+                        System.out.println("Archivo modificado");
+
+                    }
+
+                } catch (Exception e) {
+
+                    System.err.println("El ID introducido no es un numero entero. Ejemplos: 1, 77, 67");
                 }
-
-                if (encontrado) {
-                    System.err.println("El id a registrar ya lo tenemos insertado, no se han realizado cambios");
-
-                } else {
-                    System.out.print("Introduce el nombre: ");
-                    nombreLibroNuevo = scanner.nextLine();
-
-                    System.out.print("Introduce un autor: ");
-                    autorLibroNuevo = scanner.nextLine();
-
-                    nuevas.add(idBuscar + ";" + nombreLibroNuevo + ";" + autorLibroNuevo);
-                    Files.write(ruta, nuevas, StandardCharsets.UTF_8);
-                    System.out.println("Archivo modificado");
-
-                }
-
-            } catch (Exception e) {
-
-                System.err.println("El ID introducido no es un numero entero. Ejemplos: 1, 77, 67");
             }
-
         } catch (Exception e) {
             System.err.println("No se pudo modificar: " + e.getMessage());
         }
+
+        scanner.close();
     }
 
 }
