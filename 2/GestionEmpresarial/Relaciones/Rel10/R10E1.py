@@ -48,7 +48,37 @@ class Comercial(Empleado):
             return self.ventas * 0.05
             
         def resumen(self):
-            return (f"{self.nombre} -> {self.email}, ({self.ciudad})")
+            return (f"{self.nombre} -> {self.salario}, ({self.ventas})")
         
-c = Comercial("Ana", 1500, 20000)
-print(c.resumen())
+
+
+class LineaPedido:
+    def __init__(self, producto, precio, cantidad):
+        self.producto = producto
+        self.precio = precio
+        self.cantidad = cantidad
+        
+    def subtotal(self):
+        return self.cantidad * self.precio
+    
+    
+class Pedido:
+    def __init__(self,cliente,lista_lineas):
+        self.cliente = cliente
+        self.lista_lineas = lista_lineas
+        
+    def agregar_linea(self,linea):
+        self.lista_lineas.append(linea)
+        
+    def total(self):
+        total = 0
+        for linea in self.lista_lineas:
+            total += linea.subtotal()
+        return total
+            
+        
+pedido = Pedido("Ana", [])
+pedido.agregar_linea(LineaPedido("Teclado", 25.0, 2))
+pedido.agregar_linea(LineaPedido("Ratón", 10.0, 1))
+print(pedido.total())
+        
