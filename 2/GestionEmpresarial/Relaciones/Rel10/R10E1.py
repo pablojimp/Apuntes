@@ -50,8 +50,6 @@ class Comercial(Empleado):
         def resumen(self):
             return (f"{self.nombre} -> {self.salario}, ({self.ventas})")
         
-
-
 class LineaPedido:
     def __init__(self, producto, precio, cantidad):
         self.producto = producto
@@ -60,7 +58,6 @@ class LineaPedido:
         
     def subtotal(self):
         return self.cantidad * self.precio
-    
     
 class Pedido:
     def __init__(self,cliente,lista_lineas):
@@ -76,9 +73,3 @@ class Pedido:
             total += linea.subtotal()
         return total
             
-        
-pedido = Pedido("Ana", [])
-pedido.agregar_linea(LineaPedido("Teclado", 25.0, 2))
-pedido.agregar_linea(LineaPedido("Ratón", 10.0, 1))
-print(pedido.total())
-        

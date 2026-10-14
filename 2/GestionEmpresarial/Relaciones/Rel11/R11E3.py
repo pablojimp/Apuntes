@@ -1,3 +1,7 @@
+# TODO: Arregla la opcion 1,2 y 3 del ejercicio
+
+
+
 def main():
     productos = [Producto("Teclado", 25.0, 10), Producto("Ratón", 12.5, 5)]
     pedidos = [Pedido(1)]
@@ -26,6 +30,7 @@ def pedir_opcion():
 
 
 def aniadirLinea(pedidos_db, productos_db):
+    
     try:
         id_pedido = int(input("Id del pedido: "))
     except ValueError:
@@ -75,7 +80,7 @@ def mostrarPedidos(pedidos_db):
     for pedido in pedidos_db:
         print(f"Pedido {pedido.id}")
         for linea in pedido.lineas:
-            print(f"   {linea.producto.nombre} x{linea.cantidad} = {linea.subtotal()}€")
+            print(f"{linea.producto.nombre} x{linea.cantidad} = {linea.subtotal()}€")
 
 
 def calcularTotal(pedidos_db):
