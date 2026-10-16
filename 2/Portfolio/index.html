@@ -1,490 +1,2253 @@
+Cielo granada · HTML
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cielo Ambiental Decorado con Estrellas y Nubes</title>
+    <title>Cielo de Granada</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
+        /* ============================================================
+           VARIABLES PÚBLICAS
+           El script las actualiza en cada momento del día para que el
+           contenido del portfolio siempre tenga contraste con el cielo.
+           ============================================================ */
         :root {
+            --color-texto: #f7f8fb;
+            --color-texto-suave: rgba(247, 248, 251, 0.72);
+            --sombra-texto: 0 1px 24px rgba(3, 6, 20, 0.45);
+            --acento: #f3c77b;
+
+            /* Solo se usan si el navegador no tiene WebGL2 (respaldo) */
             --color-1: #fef3c7;
             --color-2: #e0f2fe;
             --color-3: #bae6fd;
             --color-4: #7dd3fc;
             --color-5: #38bdf8;
+        }
 
-            --opacidad-cielo-nocturno: 0;
-            --opacidad-estrellas: 0;
-            --opacidad-nubes: 0.8;
-            --brillo-nubes: 100%;
-            --color-texto: #0f172a;
-            --luz-farolas: 0;
-            --luces-ventanas: 0.2;
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
         }
 
         body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 30px;
+            background: #03050d;
+            color: var(--color-texto);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             overflow: hidden;
-
-            background: linear-gradient(to bottom,
-                    var(--color-5) 0%,
-                    var(--color-4) 35%,
-                    var(--color-3) 65%,
-                    var(--color-2) 85%,
-                    var(--color-1) 100%);
-
-            transition: background 0.1s linear;
-            font-family: system-ui, -apple-system, sans-serif;
-            position: relative;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Capa de estrellas para la noche */
-        #capa-estrellas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 70%;
-            pointer-events: none;
-            z-index: 1;
-            opacity: var(--opacidad-estrellas);
-            transition: opacity 0.5s ease;
-        }
-
-        .estrella {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 50%;
-            animation: titilar 2s infinite alternate ease-in-out;
-        }
-
-        @keyframes titilar {
-            0% { opacity: 0.3; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
-        }
-
-        /* Contenedor de nubes aleatorias */
-        #capa-nubes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60%;
-            pointer-events: none;
-            z-index: 2;
-            overflow: hidden;
-            opacity: var(--opacidad-nubes);
-            filter: brightness(var(--brillo-nubes));
-            transition: opacity 0.3s ease, filter 0.3s ease;
-        }
-
-        .nube-aleatoria {
-            position: absolute;
-            background: url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=800&auto=format&fit=crop') no-repeat;
-            background-size: contain;
-            width: 250px;
-            height: 120px;
-            opacity: 0.45;
-            mix-blend-mode: screen;
-            animation: derivaNube linear infinite;
-        }
-
-        @keyframes derivaNube {
-            0% { transform: translateX(-300px); }
-            100% { transform: translateX(calc(100vw + 300px)); }
-        }
-
-        /* Silueta de la calle / edificios decorativos abajo */
-        .paisaje-urbano {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 140px;
-            pointer-events: none;
-            z-index: 4;
-            display: flex;
-            align-items: flex-end;
-        }
-
-        .edificio {
-            background: #090d16;
-            position: relative;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-        }
-
-        /* Ventanas que se iluminan de noche */
-        .ventana {
-            position: absolute;
-            background: #fbbf24;
-            opacity: var(--luces-ventanas);
-            box-shadow: 0 0 6px #fbbf24;
-            transition: opacity 0.4s ease;
-        }
-
-        /* Farolas de la calle */
-        .poste-farola {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 90px;
-            background: #1e293b;
-            z-index: 5;
-        }
-
-        .luz-farola {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, rgba(251,191,36,var(--luz-farolas)) 0%, rgba(251,191,36,0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Capa oscura general para unificar atmósfera */
-        .capa-oscura {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Lienzo del cielo: ocupa toda la ventana, siempre detrás */
+        #cielo {
+            position: fixed;
+            inset: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.2);
-            pointer-events: none;
-            z-index: 3;
+            display: block;
+            z-index: 0;
         }
 
-        /* Texto ambiental dinámico */
-        .mensaje-dinamico {
-            position: absolute;
-            top: 20%;
-            font-size: 26px;
-            font-weight: 800;
-            text-align: center;
-            z-index: 6;
-            color: var(--color-texto);
-            text-shadow: 0 2px 12px rgba(255, 255, 255, 0.4);
-            transition: color 0.3s ease;
-            letter-spacing: 0.5px;
+        body.sin-webgl #cielo {
+            display: none;
         }
 
-        /* Panel de control */
-        .panel-control {
+        body.sin-webgl {
+            background: linear-gradient(to bottom,
+                    var(--color-5) 0%, var(--color-4) 35%, var(--color-3) 65%,
+                    var(--color-2) 85%, var(--color-1) 100%);
+        }
+
+        /* ============================================================
+           ZONA CENTRAL — aquí va el portfolio.
+           El sol, la luna, los meteoros y el paisaje nunca la invaden.
+           ============================================================ */
+        .contenido {
             position: relative;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(12px);
-            padding: 20px 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+            z-index: 2;
+            min-height: 100vh;
+            min-height: 100svh;
+            display: grid;
+            place-items: center;
+            padding: 0 16px 14vh;
             text-align: center;
-            width: 340px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        .caja-reloj {
-            background: #1e293b;
-            color: #ffffff;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        .contenido .antetitulo {
+            margin: 0 0 18px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--color-texto-suave);
+            transition: color 1.2s ease;
         }
 
+        .contenido h1 {
+            margin: 0;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-weight: 300;
+            font-size: clamp(2.6rem, 7vw, 5.4rem);
+            line-height: 1.02;
+            letter-spacing: -0.01em;
+            color: var(--color-texto);
+            text-shadow: var(--sombra-texto);
+            transition: color 1.2s ease, text-shadow 1.2s ease;
+        }
+
+        .contenido h1 em {
+            font-style: italic;
+            color: var(--acento);
+            transition: color 1.2s ease;
+        }
+
+        .contenido .subtitulo {
+            max-width: 34ch;
+            margin: 22px auto 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--color-texto-suave);
+            transition: color 1.2s ease;
+        }
+
+        /* ============================================================
+           PANEL DEL RELOJ (abajo, en el centro: así no tapa al sol ni a
+           la luna cuando salen o se ponen por los laterales)
+           ============================================================ */
+        .reloj {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            z-index: 5;
+            width: min(660px, calc(100vw - 32px));
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 18px;
+            padding: 10px 12px 10px 18px;
+            border-radius: 16px;
+            background: rgba(9, 13, 28, 0.34);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            backdrop-filter: blur(18px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            color: #f4f6fb;
+        }
+
+        .reloj-hora {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 32px;
+            font-weight: 300;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .reloj-fecha {
+            margin-top: 3px;
+            font-size: 11px;
+            color: rgba(244, 246, 251, 0.72);
+            white-space: nowrap;
+        }
+
+        .reloj-lugar {
+            margin-right: 4px;
+            font-size: 9.5px;
+            font-weight: 500;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(244, 246, 251, 0.55);
+        }
+
+        .reloj-centro {
+            min-width: 0;
+        }
+
+        .reloj-resumen {
+            all: unset;
+            display: block;
+            cursor: default;
+        }
+
+        .reloj-resumen .reloj-hora,
+        .reloj-resumen .reloj-fecha {
+            display: block;
+        }
+
+        .reloj-estado {
+            margin-bottom: 2px;
+            font-size: 11.5px;
+            color: rgba(244, 246, 251, 0.72);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Deslizador: la pista muestra los colores reales del día */
         #slider-hora {
+            -webkit-appearance: none;
+            appearance: none;
+            display: block;
             width: 100%;
+            height: 18px;
+            margin: 0;
+            background: transparent;
             cursor: pointer;
-            accent-color: #3b82f6;
-            margin-bottom: 15px;
         }
 
-        .controles-velocidad {
+        #slider-hora::-webkit-slider-runnable-track {
+            height: 5px;
+            border-radius: 5px;
+            background: var(--pista, linear-gradient(90deg, #0b1020, #6aa6e0, #0b1020));
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+        }
+
+        #slider-hora::-moz-range-track {
+            height: 5px;
+            border-radius: 5px;
+            background: var(--pista, linear-gradient(90deg, #0b1020, #6aa6e0, #0b1020));
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+        }
+
+        #slider-hora::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            margin-top: -5px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.16), 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        #slider-hora::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.16), 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        #slider-hora:focus-visible {
+            outline: none;
+        }
+
+        #slider-hora:focus-visible::-webkit-slider-thumb {
+            box-shadow: 0 0 0 4px rgba(243, 199, 123, 0.6);
+        }
+
+        .reloj-controles {
             display: flex;
-            justify-content: space-between;
             gap: 4px;
         }
 
         .btn-vel {
-            flex: 1;
-            background: #e2e8f0;
+            padding: 7px 10px;
             border: none;
-            padding: 8px 0;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 11px;
-            color: #475569;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.07);
+            color: rgba(244, 246, 251, 0.8);
+            font: 500 11.5px 'Inter', system-ui, sans-serif;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         .btn-vel:hover {
-            background: #cbd5e1;
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+        }
+
+        .btn-vel:focus-visible {
+            outline: 2px solid rgba(243, 199, 123, 0.7);
+            outline-offset: 1px;
         }
 
         .btn-vel.activo {
-            background: #3b82f6;
-            color: #ffffff;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            color: #0b1226;
+        }
+
+        @media (max-width: 640px) {
+            .reloj {
+                bottom: 12px;
+                width: calc(100vw - 24px);
+                grid-template-columns: auto 1fr;
+                gap: 8px 14px;
+                padding: 10px 12px 12px 14px;
+            }
+
+            .reloj-controles {
+                grid-column: 1 / -1;
+            }
+
+            .btn-vel {
+                flex: 1;
+            }
+
+            /* En el móvil el panel se pliega para no tapar el paisaje */
+            .reloj-resumen {
+                cursor: pointer;
+                border-radius: 8px;
+            }
+
+            .reloj-resumen:focus-visible {
+                outline: 2px solid rgba(243, 199, 123, 0.7);
+                outline-offset: 3px;
+            }
+
+            .reloj:not(.abierto) {
+                width: min(340px, calc(100vw - 24px));
+                padding: 8px 14px;
+            }
+
+            .reloj:not(.abierto) #slider-hora,
+            .reloj:not(.abierto) .reloj-controles {
+                display: none;
+            }
+
+            .reloj:not(.abierto) .reloj-hora {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="capa-oscura"></div>
+    <canvas id="cielo" aria-hidden="true"></canvas>
 
-    <!-- Contenedor de estrellas generado por JS -->
-    <div id="capa-estrellas"></div>
+    <!-- ===== Contenido del portfolio (sustitúyelo por el tuyo) ===== -->
+    <main class="contenido" id="contenido">
+        <div>
+            <p class="antetitulo" id="texto-dinamico">Granada · ahora</p>
+            <h1>Tu portfolio,<br><em>bajo este cielo</em></h1>
+            <p class="subtitulo">Esta zona queda libre: el sol, la luna y las estrellas fugaces recorren solo los
+                bordes.</p>
+        </div>
+    </main>
 
-    <!-- Contenedor de nubes aleatorias generado por JS -->
-    <div id="capa-nubes"></div>
+    <!-- ===== Panel de control ===== -->
+    <aside class="reloj" aria-label="Control del cielo">
+        <button class="reloj-resumen" id="reloj-resumen" type="button" aria-expanded="false"
+            aria-label="Mostrar u ocultar los controles del cielo">
+            <span class="reloj-hora" id="texto-hora">--:--</span>
+            <span class="reloj-fecha"><span class="reloj-lugar">Granada</span><span id="reloj-fecha">—</span></span>
+        </button>
+        <div class="reloj-centro">
+            <div class="reloj-estado" id="reloj-estado">—</div>
+            <input type="range" id="slider-hora" min="0" max="24" step="0.001" value="12"
+                aria-label="Hora del día en Granada">
+        </div>
+        <div class="reloj-controles">
+            <button class="btn-vel activo" data-vel="ahora">Ahora</button>
+            <button class="btn-vel" data-vel="60">60×</button>
+            <button class="btn-vel" data-vel="600">600×</button>
+            <button class="btn-vel" data-vel="3600">3600×</button>
+        </div>
+    </aside>
 
-    <!-- Texto de prueba dinámico -->
-    <div id="texto-dinamico" class="mensaje-dinamico">Vista de Calle Atmosférica</div>
+    <!-- ============================================================
+         SHADERS
+         ============================================================ -->
+    <script id="vs" type="x-shader/x-vertex">#version 300 es
+        in vec2 aPos;
+        void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
+    </script>
 
-    <!-- Silueta decorativa de la ciudad con farola -->
-    <div class="paisaje-urbano">
-        <div class="edificio" style="width: 25%; height: 90px;">
-            <div class="ventana" style="top: 15px; left: 20px; width: 12px; height: 18px;"></div>
-            <div class="ventana" style="top: 15px; left: 50px; width: 12px; height: 18px;"></div>
-            <div class="ventana" style="top: 45px; left: 20px; width: 12px; height: 18px;"></div>
-            <div class="ventana" style="top: 45px; left: 50px; width: 12px; height: 18px;"></div>
-        </div>
-        <div class="edificio" style="width: 30%; height: 130px;">
-            <div class="ventana" style="top: 20px; left: 30px; width: 15px; height: 22px;"></div>
-            <div class="ventana" style="top: 20px; left: 70px; width: 15px; height: 22px;"></div>
-            <div class="ventana" style="top: 60px; left: 30px; width: 15px; height: 22px;"></div>
-            <div class="ventana" style="top: 60px; left: 70px; width: 15px; height: 22px;"></div>
-        </div>
-        <!-- Elemento de Farola -->
-        <div style="width: 10%; height: 100px; position: relative;">
-            <div class="poste-farola"></div>
-            <div class="luz-farola" id="luz-farola"></div>
-        </div>
-        <div class="edificio" style="width: 35%; height: 110px;">
-            <div class="ventana" style="top: 25px; left: 40px; width: 14px; height: 20px;"></div>
-            <div class="ventana" style="top: 25px; left: 80px; width: 14px; height: 20px;"></div>
-            <div class="ventana" style="top: 65px; left: 40px; width: 14px; height: 20px;"></div>
-        </div>
-    </div>
-
-    <!-- Panel de control flotante -->
-    <div class="panel-control">
-        <div id="texto-hora" class="caja-reloj">12:00 PM</div>
-        <input type="range" id="slider-hora" min="0" max="24" step="0.001" value="12">
-        <div class="controles-velocidad">
-            <button class="btn-vel activo" data-vel="1">1x</button>
-            <button class="btn-vel" data-vel="2">2x</button>
-            <button class="btn-vel" data-vel="4">4x</button>
-            <button class="btn-vel" data-vel="8">8x</button>
-            <button class="btn-vel" data-vel="100">100x</button>
-            <button class="btn-vel" data-vel="1000">1000x</button>
-        </div>
-    </div>
+    <script id="fs" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+precision highp sampler2D;
+out vec4 fragColor;
+ 
+// --- Pantalla y proyección ---
+uniform vec2  uRes;
+uniform float uAspect, uTime;
+uniform vec2  uPan;          // x panorámica = uv.x * uPan.x + uPan.y
+uniform float uPanAspect;    // ancho panorámico / alto de pantalla
+uniform float uHorizon, uDegPerY, uBand;
+ 
+// --- Sol ---
+uniform vec3  uSunDir;       // dirección en la proyección de pantalla (para la dispersión)
+uniform vec2  uSunPos;
+uniform float uSunRadius, uSunFlat;
+uniform vec3  uSunDisk, uGlare;
+uniform float uExposure, uAtmos;
+uniform vec3  uMS;           // aproximación de dispersión múltiple
+ 
+// --- Luna ---
+uniform vec2  uMoonPos;
+uniform float uMoonRadius;
+uniform vec3  uMoonL, uMoonTint, uMoonHalo;
+uniform float uMoonFrac, uMoonBright, uMoonSky;
+ 
+// --- Cielo nocturno ---
+uniform float uStarVis, uMilky, uTwinkle;
+uniform mat3  uToEq;         // de la cámara a coordenadas ecuatoriales (incluye la rotación sidérea)
+ 
+// --- Iluminación del paisaje ---
+uniform vec3  uSunGround, uSunHigh, uSunCirrus, uAmb, uAmbLand, uMoonLight, uLightDir, uMoonLightDir, uCityGlow;
+uniform float uLights, uWindows, uSnow, uMist, uCover, uBloom;
+uniform vec2  uWind;
+ 
+// --- Estrella fugaz ---
+uniform vec4  uMeteor;
+uniform float uMeteorT;
+ 
+uniform sampler2D uAlb, uEmi, uInf;
+ 
+const float PI  = 3.14159265359;
+const float R_P = 6371e3;
+const float R_A = 6471e3;
+const vec3  B_R = vec3(5.8e-6, 13.5e-6, 33.1e-6);
+const float B_M = 8e-6;
+const vec3  B_O = vec3(0.650e-6, 1.881e-6, 0.085e-6);
+const float H_R = 8000.0;
+const float H_M = 1200.0;
+const float G_M = 0.80;
+ 
+// Polo norte galáctico y centro galáctico (J2000, ecuatoriales)
+const vec3 NGP = vec3(-0.8676, -0.1981, 0.4560);
+const vec3 GCN = vec3(-0.0549, -0.8734, -0.4839);
+ 
+// ------------------------------------------------------------
+// Ruido
+// ------------------------------------------------------------
+float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+float hash13(vec3 p3) { p3 = fract(p3 * 0.1031); p3 += dot(p3, p3.zyx + 31.32); return fract((p3.x + p3.y) * p3.z); }
+vec2  hash22(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973)); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.xx + p3.yz) * p3.zy); }
+vec3  hash33(vec3 p3) { p3 = fract(p3 * vec3(0.1031, 0.1030, 0.0973)); p3 += dot(p3, p3.yxz + 33.33); return fract((p3.xxy + p3.yxx) * p3.zyx); }
+ 
+float noise1(float x) { float i = floor(x), f = fract(x); float u = f * f * (3.0 - 2.0 * f); return mix(hash12(vec2(i, 1.7)), hash12(vec2(i + 1.0, 1.7)), u); }
+float noise2(vec2 p) {
+    vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash12(i), hash12(i + vec2(1, 0)), u.x), mix(hash12(i + vec2(0, 1)), hash12(i + vec2(1, 1)), u.x), u.y);
+}
+float noise3(vec3 p) {
+    vec3 i = floor(p), f = fract(p); vec3 u = f * f * (3.0 - 2.0 * f);
+    float a = hash13(i), b = hash13(i + vec3(1, 0, 0)), c = hash13(i + vec3(0, 1, 0)), d = hash13(i + vec3(1, 1, 0));
+    float e = hash13(i + vec3(0, 0, 1)), g = hash13(i + vec3(1, 0, 1)), h = hash13(i + vec3(0, 1, 1)), k = hash13(i + vec3(1, 1, 1));
+    return mix(mix(mix(a, b, u.x), mix(c, d, u.x), u.y), mix(mix(e, g, u.x), mix(h, k, u.x), u.y), u.z);
+}
+float fbm1(float x) { float s = 0.0, a = 0.5; for (int i = 0; i < 4; i++) { s += a * noise1(x); x = x * 2.03 + 3.1; a *= 0.5; } return s; }
+float fbm2(vec2 p) {
+    float s = 0.0, a = 0.5;
+    for (int i = 0; i < 5; i++) { s += a * noise2(p); p = mat2(1.6, 1.2, -1.2, 1.6) * p + 1.7; a *= 0.5; }
+    return s;
+}
+float fbm3(vec3 p) { float s = 0.0, a = 0.5; for (int i = 0; i < 4; i++) { s += a * noise3(p); p = p * 2.07 + 1.3; a *= 0.5; } return s; }
+float gauss(float x, float c, float w) { float d = (x - c) / w; return exp(-d * d); }
+float pico(float x, float c, float w, float h) { return h * pow(max(0.0, 1.0 - abs(x - c) / w), 1.6); }
+ 
+// ------------------------------------------------------------
+// Proyección: cada píxel es una dirección del cielo.
+// El sol y la luna usan la misma proyección, así su halo cae justo donde se dibujan.
+// ------------------------------------------------------------
+vec3 dirDesdeUV(vec2 uv) {
+    float el = radians((uv.y - uHorizon) * uDegPerY);
+    float az = radians((uv.x - 0.5) * uAspect * uDegPerY);
+    return vec3(sin(az) * cos(el), sin(el), -cos(az) * cos(el));
+}
+ 
+// ------------------------------------------------------------
+// Dispersión atmosférica (Rayleigh + Mie + ozono, dispersión simple)
+// ------------------------------------------------------------
+vec2 rsi(vec3 o, vec3 d, float r) {
+    float b = 2.0 * dot(d, o);
+    float c = dot(o, o) - r * r;
+    float disc = b * b - 4.0 * c;
+    if (disc < 0.0) return vec2(1e9, -1e9);
+    disc = sqrt(disc);
+    return vec2(-b - disc, -b + disc) * 0.5;
+}
+ 
+vec3 atmosfera(vec3 rd, vec3 sd) {
+    vec3 o = vec3(0.0, R_P + 800.0, 0.0);
+    float L = rsi(o, rd, R_A).y;
+    vec2 pg = rsi(o, rd, R_P);
+    if (pg.x < pg.y && pg.x > 0.0) L = min(L, pg.x);
+ 
+    float mu = dot(rd, sd);
+    float mumu = mu * mu, gg = G_M * G_M;
+    float pR = 3.0 / (16.0 * PI) * (1.0 + mumu);
+    float pM = 3.0 / (8.0 * PI) * ((1.0 - gg) * (mumu + 1.0)) / (pow(1.0 + gg - 2.0 * mu * G_M, 1.5) * (2.0 + gg));
+ 
+    vec3 tR = vec3(0.0), tM = vec3(0.0);
+    float oR = 0.0, oM = 0.0, oO = 0.0, prev = 0.0;
+    for (int i = 0; i < 12; i++) {
+        float f = (float(i) + 1.0) / 12.0;
+        float t1 = L * f * f;              // pasos más finos cerca del observador
+        float ds = t1 - prev;
+        float tm = prev + 0.5 * ds;
+        prev = t1;
+        vec3 p = o + rd * tm;
+        float h = length(p) - R_P;
+        float dR = exp(-h / H_R) * ds;
+        float dM = exp(-h / H_M) * ds;
+        float dO = max(0.0, 1.0 - abs(h - 25e3) / 15e3) * ds;
+        oR += dR; oM += dM; oO += dO;
+ 
+        vec2 pl = rsi(p, sd, R_P);
+        if (pl.x < pl.y && pl.x > 0.0) continue;   // sombra de la Tierra
+        float Lj = rsi(p, sd, R_A).y;
+        float dj = Lj / 5.0;
+        float jR = 0.0, jM = 0.0, jO = 0.0;
+        for (int j = 0; j < 5; j++) {
+            float hj = length(p + sd * (dj * (float(j) + 0.5))) - R_P;
+            jR += exp(-hj / H_R);
+            jM += exp(-hj / H_M);
+            jO += max(0.0, 1.0 - abs(hj - 25e3) / 15e3);
+        }
+        vec3 at = exp(-(B_R * (oR + jR * dj) + B_M * 1.1 * (oM + jM * dj) + B_O * (oO + jO * dj)));
+        tR += dR * at;
+        tM += dM * at;
+    }
+    return 22.0 * (pR * B_R * tR + pM * B_M * tM);
+}
+ 
+// ------------------------------------------------------------
+// Estrellas y Vía Láctea
+// ------------------------------------------------------------
+vec3 capaEstrellas(vec3 d, float pix, float escala, float umbral, float brillo, float semilla) {
+    vec3 p = d * escala;
+    vec3 id = floor(p);
+    if (hash13(id + semilla) > umbral) return vec3(0.0);
+    vec3 h = hash33(id + semilla * 1.7);
+    vec3 sp = id + 0.25 + 0.5 * h;
+    float dist = length(p - sp);
+    float mag = pow(hash13(id + semilla + 5.31), 7.0);
+    float r = min(pix * escala * (0.8 + 1.7 * mag), 0.24);
+    float b = exp(-dist * dist / (r * r)) * (0.035 + 3.6 * mag) * brillo;
+    float tw = 1.0 + uTwinkle * (sin(uTime * (2.5 + 6.0 * h.x) + h.y * 40.0) * 0.5 + sin(uTime * (5.3 + 3.0 * h.z) + h.x * 17.0) * 0.3);
+    vec3 tinte = mix(vec3(0.72, 0.80, 1.0), vec3(1.0, 0.85, 0.66), smoothstep(0.2, 0.95, hash13(id + semilla + 9.7)));
+    return tinte * b * tw;
+}
+ 
+vec3 viaLactea(vec3 d, out float densidad) {
+    float b = dot(d, NGP);
+    float gc = dot(d, GCN);
+    float banda = exp(-b * b / 0.040);
+    float nucleo = exp(-b * b / 0.0075);
+    float bulbo = smoothstep(-0.3, 1.0, gc);
+    float n = fbm3(d * 5.0);
+    float polvo = smoothstep(0.44, 0.70, fbm3(d * 13.0 + 4.0)) * exp(-b * b / 0.006) * (0.45 + 0.55 * bulbo);
+    float m = (banda * 0.42 + nucleo * 0.8) * (0.35 + 1.0 * n) * (0.5 + 0.9 * bulbo);
+    m *= 1.0 - 0.88 * polvo;
+    densidad = banda;
+    vec3 c = mix(vec3(0.60, 0.68, 0.95), vec3(1.0, 0.88, 0.72), clamp(nucleo * bulbo * 1.3, 0.0, 1.0));
+    return c * m;
+}
+ 
+// ------------------------------------------------------------
+// Nubes (cirros altos + cúmulos/altocúmulos con sombra propia)
+// ------------------------------------------------------------
+float hg(float mu, float g) { float gg = g * g; return (1.0 - gg) / (4.0 * PI * pow(1.0 + gg - 2.0 * g * mu, 1.5)); }
+ 
+vec4 nubes(vec3 rd, vec2 uv, vec3 haze) {
+    if (rd.y < 0.012 || uCover < 0.01) return vec4(0.0);
+    // Las nubes se aclaran detrás del contenido central
+    float cm = 1.0 - smoothstep(0.10, 0.38, length((uv - vec2(0.5, 0.54)) * vec2(min(uAspect, 1.9) * 0.6, 1.0)));
+    float mu = dot(rd, uSunDir);
+    vec3 acc = vec3(0.0);
+    float alpha = 0.0;
+ 
+    // Cirros
+    {
+        float t = 2.6 / rd.y;
+        vec2 p = rd.xz * t * 0.16 + uWind * 0.45;
+        float s = fbm2(vec2(p.x * 0.55, p.y * 3.4) + vec2(0.0, uWind.x * 0.2));
+        float m = fbm2(p * 0.5 + 11.0);
+        float d = smoothstep(0.50, 0.84, s) * smoothstep(0.35, 0.75, m) * smoothstep(0.0, 0.5, uCover + 0.15);
+        vec3 c = uSunCirrus * (0.85 + 3.0 * hg(mu, 0.55)) + uAmb * 0.95 + uCityGlow * 0.6 + uMoonLight * 0.8;
+        c = mix(haze, c, exp(-t * 0.035));
+        d *= 0.55 * smoothstep(0.015, 0.15, rd.y) * (1.0 - 0.5 * cm);
+        acc = c * d;
+        alpha = d;
+    }
+ 
+    // Cúmulos
+    {
+        float t = 1.0 / rd.y;
+        vec2 p = rd.xz * t * 0.42 + uWind;
+        vec2 q = p + vec2(fbm2(p * 0.7 + uWind * 0.2), fbm2(p * 0.7 + 5.2 - uWind * 0.15)) * 0.6;
+        float det = fbm2(q * 4.1 + uWind * 0.9);
+        float n = fbm2(q * 1.15) * 0.78 + det * 0.32;
+        float umb = 1.02 - uCover * 0.62;
+        float d = smoothstep(umb, umb + 0.22, n);
+        if (d > 0.002) {
+            vec2 sdir = normalize(uSunDir.xz + vec2(1e-4));
+            float nl = fbm2((q + sdir * 0.09) * 1.15) * 0.78 + det * 0.32;
+            float sombra = exp(-smoothstep(umb, umb + 0.22, nl) * 2.4);
+            float espesor = smoothstep(0.0, 1.0, d);
+            vec3 c = uSunHigh * (0.3 + 0.7 * sombra) * (hg(mu, 0.62) * 2.6 + 0.45);
+            c += uSunHigh * hg(mu, 0.85) * (1.0 - espesor) * 1.5;            // bordes plateados
+            c += uAmb * (0.95 - 0.4 * espesor);
+            c += uMoonLight * (0.5 + 0.5 * sombra) + uCityGlow * (2.2 + 1.5 * espesor);
+            c = mix(haze, c, exp(-t * 0.05));
+            d *= smoothstep(0.012, 0.10, rd.y) * (1.0 - 0.6 * cm);
+            acc = c * d + acc * (1.0 - d);
+            alpha = d + alpha * (1.0 - d);
+        }
+    }
+    return vec4(acc, alpha);
+}
+ 
+// ------------------------------------------------------------
+// Relieve lejano: Sierra Nevada y colinas
+// (perfil fijo en coordenadas panorámicas, igual que en JS)
+// ------------------------------------------------------------
+float sierraY(float xv) {
+    float nx = xv * uPanAspect;
+    float y = 0.207;
+    y += 0.010 * gauss(xv, 0.10, 0.08) + 0.006 * gauss(xv, 0.20, 0.05);   // Sierra de Huétor
+    y += 0.010 * gauss(xv, 0.50, 0.16);                                     // estribaciones
+    y += 0.018 * gauss(xv, 0.74, 0.11);                                     // macizo central
+    y += pico(xv, 0.620, 0.040, 0.008);
+    y += pico(xv, 0.690, 0.050, 0.016);                                     // Veleta
+    y += pico(xv, 0.785, 0.060, 0.030);                                     // Mulhacén
+    y += pico(xv, 0.845, 0.035, 0.022);                                     // Alcazaba
+    y -= 0.006 * smoothstep(0.88, 0.95, xv);                                // la Vega
+    float r = 0.0, a = 0.5, f = 5.0;
+    for (int i = 0; i < 6; i++) { float n = noise1(nx * f + float(i) * 7.3); r += a * (1.0 - abs(2.0 * n - 1.0)); a *= 0.55; f *= 2.05; }
+    float relieve = smoothstep(0.0, 0.03, y - 0.207);
+    return y + (r - 0.5) * (0.003 + 0.014 * relieve);
+}
+ 
+float colinasY(float xv) {
+    float nx = xv * uPanAspect;
+    float y = 0.176 + 0.014 * gauss(xv, 0.60, 0.16) + 0.006 * gauss(xv, 0.08, 0.10) - 0.016 * smoothstep(0.80, 0.98, xv);
+    return y + (fbm1(nx * 2.6) - 0.5) * 0.012 + (noise1(nx * 30.0) - 0.5) * 0.0015;
+}
+ 
+vec3 capaSierra(vec2 uv, float xv, float yS, vec3 haze) {
+    float e = 0.0015;
+    float s = (sierraY(xv + e) - sierraY(xv - e)) / (2.0 * e) / uPanAspect;
+    float nx = xv * uPanAspect;
+    float hb = smoothstep(0.205, 0.27, yS);
+    float prof = clamp((yS - uv.y) / max(yS - 0.198, 0.004), 0.0, 1.0);
+    vec2 pr = vec2(nx * 60.0, uv.y * 55.0);
+    float carcava = fbm2(pr);
+    float grano = noise2(vec2(nx * 260.0, uv.y * 120.0));
+    float gx = fbm2(pr + vec2(0.35, 0.0)) - fbm2(pr - vec2(0.35, 0.0));
+    float gy = fbm2(pr + vec2(0.0, 0.35)) - carcava;
+    float cerca = 1.0 - smoothstep(0.0, 0.3, prof);
+    vec3 n = normalize(vec3(-s * 2.2 * cerca + gx * 2.2, 0.45 - prof * 0.25 + gy * 1.5, 1.0));
+ 
+    float espesor = uSnow * 0.055 * pow(hb, 1.5) * (0.5 + 0.9 * carcava);
+    float nieve = smoothstep(-0.001, 0.001, uv.y - (yS - espesor) + (grano - 0.5) * 0.004) * smoothstep(0.0005, 0.002, espesor);
+ 
+    vec3 roca = mix(vec3(0.17, 0.16, 0.155), vec3(0.11, 0.12, 0.09), smoothstep(0.3, 0.9, prof));
+    roca *= 0.82 + 0.36 * carcava;
+    vec3 alb = mix(roca, vec3(0.86, 0.88, 0.92), nieve);
+ 
+    float lam = max(dot(n, uLightDir), 0.0);
+    float lamM = max(dot(n, uMoonLightDir), 0.0);
+    vec3 sol = mix(uSunGround, uSunHigh, hb * (1.0 - prof));   // las cumbres conservan la luz más tiempo
+    vec3 lit = alb * (sol * lam * 1.05 + uAmbLand * 0.75 + uMoonLight * lamM * 1.4);
+    float bruma = clamp(0.24 + 0.16 * prof - 0.08 * hb + uMist * 0.18, 0.0, 0.9);
+    return mix(lit, haze, bruma);
+}
+ 
+vec3 capaColinas(vec2 uv, float xv, vec3 haze) {
+    float nx = xv * uPanAspect;
+    float e = 0.0015;
+    float s = (colinasY(xv + e) - colinasY(xv - e)) / (2.0 * e) / uPanAspect;
+    float prof = clamp((colinasY(xv) - uv.y) / 0.04, 0.0, 1.0);
+    s *= 1.0 - smoothstep(0.0, 0.4, prof);
+    vec2 pc = vec2(nx * 90.0, uv.y * 90.0);
+    float tex = fbm2(pc);
+    float gx = fbm2(pc + vec2(0.4, 0.0)) - tex;
+    float arb = smoothstep(0.45, 0.7, noise2(vec2(nx * 420.0, uv.y * 260.0)));
+    vec3 alb = mix(vec3(0.13, 0.12, 0.08), vec3(0.07, 0.09, 0.05), arb) * (0.8 + 0.4 * tex);
+    vec3 n = normalize(vec3(-s * 2.0 + gx * 2.0, 0.5, 1.0));
+    float lam = max(dot(n, uLightDir) * 0.8 + 0.2, 0.0);
+    vec3 lit = alb * (uSunGround * lam + uAmbLand * 0.75 + uMoonLight * 0.5);
+    return mix(lit, haze, 0.30 + uMist * 0.2);
+}
+ 
+vec3 aces(vec3 x) { return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0); }
+ 
+void main() {
+    vec2 uv = gl_FragCoord.xy / uRes;
+    vec2 asp = vec2(uAspect, 1.0);
+    float xv = uv.x * uPan.x + uPan.y;
+    vec3 rd = dirDesdeUV(uv);
+    vec3 rdS = rd;
+    if (rdS.y < 0.007) { rdS.y = 0.007; rdS = normalize(rdS); }
+ 
+    // ---- ¿Qué tapa el paisaje? ----
+    float yS = sierraY(xv);
+    float yC = colinasY(xv);
+    vec2 tuv = vec2(uv.x, uv.y / uBand);
+    vec4 alb = tuv.y < 1.0 ? texture(uAlb, tuv) : vec4(0.0);
+    bool cieloVisible = uv.y >= yS && alb.a < 0.995;
+ 
+    // ---- Cielo ----
+    vec3 sky = uAtmos > 0.5 ? atmosfera(rdS, uSunDir) * uExposure : vec3(0.0);
+    sky += uMS * (0.75 + 0.25 * (1.0 - rdS.y));
+    float elN = max(rd.y, 0.0);
+    vec3 noche = mix(vec3(0.0060, 0.0088, 0.020), vec3(0.0020, 0.0032, 0.0080), pow(elN, 0.55));
+    noche += uCityGlow * exp(-elN * 7.0);
+    noche += uMoonSky * mix(vec3(0.012, 0.020, 0.042), vec3(0.006, 0.011, 0.026), elN);
+    sky += noche;
+    vec3 haze = sky;     // color de la perspectiva aérea (sin astros ni nubes)
+    vec3 col = sky;
+ 
+    if (cieloVisible) {
+        float lumCielo = dot(sky, vec3(0.2126, 0.7152, 0.0722));
+        float puerta = 1.0 - smoothstep(0.012, 0.11, lumCielo);   // las estrellas solo se ven si el cielo es oscuro
+ 
+        // Estrellas y Vía Láctea
+        float tapaLuna = 0.0;
+        vec2 dm = (uv - uMoonPos) * asp;
+        float rm = length(dm) / uMoonRadius;
+        if (uMoonBright > 0.0) tapaLuna = 1.0 - smoothstep(0.96, 1.0, rm);
+ 
+        if (uStarVis > 0.003 && puerta > 0.0) {
+            vec3 dEq = uToEq * rd;
+            float pix = radians(uDegPerY) / uRes.y;
+            float ext = exp(-0.12 / max(rd.y, 0.03));
+            float densMW = 0.0;
+            vec3 mw = uMilky > 0.003 ? viaLactea(dEq, densMW) : vec3(0.0);
+            vec3 st = capaEstrellas(dEq, pix, 70.0, 0.12, 1.0, 1.0);
+            st += capaEstrellas(dEq, pix, 170.0, 0.10, 0.45, 2.0);
+            st += capaEstrellas(dEq, pix, 400.0, 0.025 + 0.30 * densMW * uMilky, 0.30, 3.0);
+            float centro = 1.0 - smoothstep(0.12, 0.40, length((uv - vec2(0.5, 0.52)) * vec2(min(uAspect, 1.9) * 0.6, 1.0)));
+            col += (st * uStarVis * (1.0 - 0.55 * centro) + mw * 0.055 * uMilky * (1.0 - 0.35 * centro)) * ext * puerta * (1.0 - tapaLuna);
+        }
+ 
+        // Luna (fase real, mares, cráteres y luz cenicienta)
+        if (uMoonBright > 0.0) {
+            float dmo = length(dm);
+            col += uMoonHalo * (exp(-dmo * 22.0) * 0.30 + exp(-dmo * 5.0) * 0.06);
+            if (rm < 1.0) {
+                vec2 q = dm / uMoonRadius;
+                vec3 n = vec3(q, sqrt(max(0.0, 1.0 - dot(q, q))));
+                float mares = smoothstep(0.42, 0.62, fbm2(q * 2.1 + vec2(3.1, 7.7)));
+                float a = mix(1.0, 0.58, mares) * (0.9 + 0.2 * noise2(q * 22.0));
+                vec2 cp = q * 4.2; vec2 ci = floor(cp); vec2 cf = fract(cp);
+                for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
+                    vec2 g = vec2(float(x), float(y));
+                    vec2 o = hash22(ci + g);
+                    float rad = 0.12 + 0.22 * hash12(ci + g + 3.1);
+                    float dd = length(g + o - cf) / rad;
+                    a *= mix(0.84, 1.0, smoothstep(0.6, 1.0, dd)) * (1.0 + 0.10 * exp(-pow((dd - 1.0) * 6.0, 2.0)));
+                }
+                float ndl = dot(n, uMoonL);
+                float ls = ndl > 0.0 ? min(2.0 * ndl / (ndl + n.z + 0.05), 1.15) : 0.0;
+                ls *= smoothstep(-0.02, 0.08, ndl);
+                float ceniza = 0.018 * (1.0 - uMoonFrac) * (1.0 - smoothstep(-0.05, 0.05, ndl));
+                float borde = 1.0 - smoothstep(0.965, 1.0, rm);
+                col += uMoonTint * a * (ls + ceniza) * uMoonBright * borde;
+            }
+        }
+ 
+        // Disco solar con oscurecimiento del limbo
+        vec2 dsv = (uv - uSunPos) * asp;
+        dsv.y /= uSunFlat;
+        float rS = length(dsv) / uSunRadius;
+        if (rS < 1.0) {
+            float limbo = 1.0 - 0.55 * (1.0 - sqrt(max(0.0, 1.0 - rS * rS)));
+            col += uSunDisk * limbo * (1.0 - smoothstep(0.9, 1.0, rS));
+        }
+ 
+        // Estrella fugaz
+        if (uMeteorT >= 0.0) {
+            vec2 P = uv * asp;
+            vec2 cabeza = uMeteor.xy + uMeteor.zw * uMeteorT;
+            vec2 cola = uMeteor.xy + uMeteor.zw * max(uMeteorT - 0.35, 0.0);
+            vec2 pa = P - cola, ba = cabeza - cola;
+            float hh = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-7), 0.0, 1.0);
+            float dist = length(pa - ba * hh);
+            float w = 1.6 / uRes.y;
+            col += vec3(0.85, 0.9, 1.0) * exp(-dist * dist / (w * w)) * hh * hh * sin(PI * uMeteorT) * 1.8 * uStarVis * puerta;
+        }
+ 
+        // Nubes
+        vec4 nb = nubes(rd, uv, haze);
+        col = col * (1.0 - nb.a) + nb.rgb;
+    }
+ 
+    // ---- Sierra Nevada ----
+    if (uv.y < yS) col = capaSierra(uv, xv, yS, haze);
+    // ---- Colinas intermedias ----
+    if (uv.y < yC) col = capaColinas(uv, xv, haze);
+ 
+    // ---- Bruma de la Vega ----
+    if (uMist > 0.01) {
+        float m = uMist * exp(-max(0.0, uv.y - 0.172) / 0.014) * smoothstep(0.09, 0.16, uv.y);
+        m *= 0.55 + 0.45 * fbm2(vec2(xv * uPanAspect * 2.2 + uWind.x * 0.05, uv.y * 22.0));
+        vec3 mc = mix(haze, uSunGround * 0.55 + uAmb * 0.9, 0.45);
+        col = mix(col, mc, clamp(m, 0.0, 0.85));
+    }
+ 
+    // ---- Alhambra, Albaicín y ciudad (texturas pintadas, iluminadas aquí) ----
+    if (alb.a > 0.003) {
+        vec4 inf = texture(uInf, tuv);
+        vec3 emi = texture(uEmi, tuv).rgb;
+        float prof = inf.r;
+        float fx = inf.g * 2.0 - 1.0;
+        float tag = inf.b;
+        vec3 n; float kA; float wrap = 0.0;
+        if (tag < 0.15)      { n = normalize(vec3(fx, 0.18, 1.0 - abs(fx) * 0.65)); kA = 0.75; }   // muros
+        else if (tag < 0.32) { n = normalize(vec3(fx * 0.35, 0.85, 0.5)); kA = 0.8; }               // tejados
+        else if (tag < 0.46) { n = normalize(vec3(fx * 0.5, 0.6, 0.62)); kA = 0.48; wrap = 0.2; }   // vegetación
+        else                 { n = vec3(0.0, 0.0, 1.0); kA = 0.35; }                                // ventanas
+        float lam = clamp((dot(n, uLightDir) + wrap) / (1.0 + wrap), 0.0, 1.0);
+        float lamM = clamp((dot(n, uMoonLightDir) + wrap) / (1.0 + wrap), 0.0, 1.0);
+        vec3 a = pow(alb.rgb / max(alb.a, 1e-3), vec3(2.2)) * (0.9 + 0.2 * noise2(gl_FragCoord.xy * 0.5));
+        if (tag >= 0.32 && tag < 0.46) a *= 0.5 + 0.8 * noise2(gl_FragCoord.xy * 0.55);   // textura de hojas
+        vec3 sol = mix(uSunGround, uSunHigh, prof * 0.3);
+        vec3 lit = a * (sol * lam + uAmbLand * kA + uMoonLight * lamM);
+        float on = uLights;
+        if (tag >= 0.46) {
+            on *= step((tag - 0.5) * 2.0, uWindows);
+            lit += haze * 0.10 * (1.0 - on);                 // el cristal refleja el cielo
+        }
+        float detalle = 1.0;
+        if (tag < 0.15) {   // la luz de los focos deja ver la textura de la piedra y la cal
+            vec4 albS = textureLod(uAlb, tuv, 3.0);
+            const vec3 LW = vec3(0.2126, 0.7152, 0.0722);
+            detalle = clamp((dot(alb.rgb, LW) / max(alb.a, 1e-3)) / max(dot(albS.rgb, LW) / max(albS.a, 1e-3), 0.02), 0.45, 1.6);
+        }
+        lit += pow(emi, vec3(2.2)) * 0.95 * on * detalle;
+        lit = mix(lit, haze, clamp(prof * prof * 0.6 + uMist * prof * 0.25, 0.0, 0.8));
+        col = mix(col, lit, alb.a);
+    }
+ 
+    // ---- Halo de las luces ----
+    if (uLights > 0.01) {
+        vec2 tb = vec2(uv.x, clamp(uv.y / uBand, 0.0, 1.0));
+        vec3 b1 = textureLod(uEmi, tb, 3.0).rgb;
+        vec3 b2 = textureLod(uEmi, tb, 5.0).rgb;
+        vec3 b3 = textureLod(uEmi, tb, 7.0).rgb;
+        vec3 bl = b1 * b1 * 0.45 + b2 * b2 * 0.55 + b3 * b3 * 0.75;
+        col += bl * uLights * uBloom * (1.0 - smoothstep(uBand * 0.9, uBand * 1.2, uv.y));
+    }
+ 
+    // ---- Resplandor del sol ----
+    vec2 dg = (uv - uSunPos) * asp;
+    float dgl = length(dg);
+    col += uGlare * (exp(-dgl * 60.0) * 0.6 + exp(-dgl * 10.0) * 0.10 + exp(-dgl * 2.5) * 0.025);
+ 
+    // ---- Revelado ----
+    col *= mix(1.0, 0.86, smoothstep(0.55, 1.3, length((uv - 0.5) * vec2(min(uAspect, 2.0) * 0.8, 1.0))));
+    col = aces(col);
+    float l = dot(col, vec3(0.2126, 0.7152, 0.0722));
+    col = mix(vec3(l), col, 1.1);
+    col = pow(max(col, 0.0), vec3(1.0 / 2.2));
+    col += (hash12(gl_FragCoord.xy + fract(uTime * 7.13) * 91.0) - 0.5) * (1.5 / 255.0);
+    fragColor = vec4(col, 1.0);
+}
+    </script>
 
     <script>
-        const slider = document.getElementById('slider-hora');
-        const textoHora = document.getElementById('texto-hora');
-        const rootStyle = document.documentElement.style;
-        const botonesVel = document.querySelectorAll('.btn-vel');
-        const capaEstrellas = document.getElementById('capa-estrellas');
-        const capaNubes = document.getElementById('capa-nubes');
+        'use strict';
+        /* ================================================================
+           CIELO DE GRANADA — cómo usarlo en el portfolio
+           ----------------------------------------------------------------
+           · Tu contenido va dentro de <main class="contenido">. El sol, la
+             luna, las estrellas fugaces y el panel respetan esa zona.
+           · Variables CSS que se actualizan solas según el cielo:
+               --color-texto, --color-texto-suave, --sombra-texto, --acento
+             y el atributo <html data-fase="noche|hora-azul|alba|amanecer|dia|hora-dorada|ocaso">.
+           · Evento para reaccionar desde JS:
+               window.addEventListener('cielo:cambio', e => console.log(e.detail));
+           · Parámetros de URL para probar:
+               ?hora=20.5   ?fecha=2026-12-24   ?vel=600   ?nubes=0.6   ?calidad=1
+           · Muestra el cielo real de Granada (sol y luna calculados para la
+             fecha y hora de Granada), venga de donde venga la visita.
+           ================================================================ */
 
-        let velocidad = 1;
-        let modoManual = false;
+        // ================================================================
+        //  CONFIGURACIÓN
+        // ================================================================
+        const CONFIG = {
+            latitud: 37.1773,           // Granada
+            longitud: -3.5986,
+            zonaHoraria: 'Europe/Madrid',
+            azimutCamara: 150,          // la escena mira al SSE, como desde el Mirador de San Nicolás
+            horizonte: 0.20,            // altura del horizonte (fracción de pantalla desde abajo)
+            cimaY: 0.925,               // altura que alcanza el sol en su punto más alto
+            gradosCima: 55,             // elevación visual que corresponde a cimaY
+            margenX: 0.46,              // el sol sube a 4 % del borde lateral
+            banda: 0.36,                // alto de la franja de paisaje pintado
+            radioSol: 0.009,            // radios en fracción del alto de pantalla
+            radioLuna: 0.014,
+            calidadInicial: 1.0,        // escala de resolución del render (se adapta sola)
+        };
+        const GRADOS_POR_Y = CONFIG.gradosCima / (CONFIG.cimaY - CONFIG.horizonte);
 
-        // Generar Estrellas aleatorias en el DOM
-        for (let i = 0; i < 70; i++) {
-            const estrella = document.createElement('div');
-            estrella.className = 'estrella';
-            estrella.style.top = `${Math.random() * 80}%`;
-            estrella.style.left = `${Math.random() * 100}%`;
-            const tamano = Math.random() * 3 + 1;
-            estrella.style.width = `${tamano}px`;
-            estrella.style.height = `${tamano}px`;
-            estrella.style.animationDuration = `${Math.random() * 3 + 1}s`;
-            estrella.style.animationDelay = `${Math.random() * 3}s`;
-            capaEstrellas.appendChild(estrella);
-        }
+        const RAD = Math.PI / 180, DEG = 180 / Math.PI;
+        const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+        const fract = x => x - Math.floor(x);
+        const mix = (a, b, t) => a + (b - a) * t;
+        const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+        const v3 = (a, k) => [a[0] * k, a[1] * k, a[2] * k];
+        const lum = v => 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+        const reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        // Generar Nubes aleatorias con movimiento independiente de izquierda a derecha
-        for (let i = 0; i < 6; i++) {
-            const nube = document.createElement('div');
-            nube.className = 'nube-aleatoria';
-            nube.style.top = `${Math.random() * 45}%`;
-            nube.style.animationDuration = `${Math.random() * 50 + 40}s`;
-            nube.style.animationDelay = `-${Math.random() * 50}s`;
-            nube.style.transform = `scale(${Math.random() * 0.5 + 0.6})`;
-            capaNubes.appendChild(nube);
-        }
-
+        // ================================================================
+        //  RESPALDO: tu paleta de keyframes (solo si no hay WebGL2)
+        // ================================================================
         const cicloCielo = [
-            { hora: 0,    c1: '#020617', c2: '#050816', c3: '#0b1026', c4: '#0f172a', c5: '#020617' },
-            { hora: 3,    c1: '#040714', c2: '#070b1e', c3: '#0a1028', c4: '#0c1430', c5: '#01030d' },
-            { hora: 6.5,  c1: '#312e81', c2: '#4c1d95', c3: '#1e1b4b', c4: '#0f172a', c5: '#020617' },
+            { hora: 0, c1: '#020617', c2: '#050816', c3: '#0b1026', c4: '#0f172a', c5: '#020617' },
+            { hora: 3, c1: '#040714', c2: '#070b1e', c3: '#0a1028', c4: '#0c1430', c5: '#01030d' },
+            { hora: 6.5, c1: '#312e81', c2: '#4c1d95', c3: '#1e1b4b', c4: '#0f172a', c5: '#020617' },
             { hora: 7.75, c1: '#fdba74', c2: '#f9a8d4', c3: '#c4b5fd', c4: '#6366f1', c5: '#1e3a8a' },
-            { hora: 9,    c1: '#fef3c7', c2: '#bae6fd', c3: '#7dd3fc', c4: '#38bdf8', c5: '#0284c7' },
-            { hora: 11,   c1: '#f0f9ff', c2: '#e0f2fe', c3: '#7dd3fc', c4: '#0ea5e9', c5: '#0369a1' },
-            { hora: 14,   c1: '#f8fafc', c2: '#bae6fd', c3: '#38bdf8', c4: '#0ea5e9', c5: '#0369a1' },
-            { hora: 17,   c1: '#fef08a', c2: '#bae6fd', c3: '#7dd3fc', c4: '#38bdf8', c5: '#0284c7' },
-            { hora: 19,   c1: '#fde047', c2: '#fb923c', c3: '#7dd3fc', c4: '#0ea5e9', c5: '#1e3a8a' },
-            { hora: 20.25,c1: '#f97316', c2: '#f472b6', c3: '#a78bfa', c4: '#4338ca', c5: '#1e1b4b' },
+            { hora: 9, c1: '#fef3c7', c2: '#bae6fd', c3: '#7dd3fc', c4: '#38bdf8', c5: '#0284c7' },
+            { hora: 11, c1: '#f0f9ff', c2: '#e0f2fe', c3: '#7dd3fc', c4: '#0ea5e9', c5: '#0369a1' },
+            { hora: 14, c1: '#f8fafc', c2: '#bae6fd', c3: '#38bdf8', c4: '#0ea5e9', c5: '#0369a1' },
+            { hora: 17, c1: '#fef08a', c2: '#bae6fd', c3: '#7dd3fc', c4: '#38bdf8', c5: '#0284c7' },
+            { hora: 19, c1: '#fde047', c2: '#fb923c', c3: '#7dd3fc', c4: '#0ea5e9', c5: '#1e3a8a' },
+            { hora: 20.25, c1: '#f97316', c2: '#f472b6', c3: '#a78bfa', c4: '#4338ca', c5: '#1e1b4b' },
             { hora: 21.5, c1: '#581c87', c2: '#312e81', c3: '#1e1b4b', c4: '#0f172a', c5: '#020617' }
         ];
-
-        const hexARgb = (hex) => {
-            const n = parseInt(hex.slice(1), 16);
-            return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-        };
-
-        const rgbAHex = ([r, g, b]) =>
-            '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
-
-        const lerp = (a, b, t) => a + (b - a) * t;
-
-        const lerpColor = (h1, h2, t) => {
-            const a = hexARgb(h1), b = hexARgb(h2);
-            return rgbAHex(a.map((v, i) => lerp(v, b[i], t)));
-        };
-
+        const hexARgb = hex => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+        const rgbAHex = ([r, g, b]) => '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+        const lerpColor = (h1, h2, t) => { const a = hexARgb(h1), b = hexARgb(h2); return rgbAHex(a.map((v, i) => mix(v, b[i], t))); };
         function cieloEnHora(hora) {
-            const h = ((hora % 24) + 24) % 24;
-            const n = cicloCielo.length;
-
+            const h = ((hora % 24) + 24) % 24, n = cicloCielo.length;
             let i = n - 1;
-            for (let k = 0; k < n; k++) {
-                if (cicloCielo[k].hora <= h) i = k;
-            }
-            const a = cicloCielo[i];
-            const b = cicloCielo[(i + 1) % n];
-
+            for (let k = 0; k < n; k++) if (cicloCielo[k].hora <= h) i = k;
+            const a = cicloCielo[i], b = cicloCielo[(i + 1) % n];
             const fin = b.hora > a.hora ? b.hora : b.hora + 24;
-            const actual = h >= a.hora ? h : h + 24;
-            const t = (actual - a.hora) / (fin - a.hora);
-
-            const estado = {};
-            for (const c of ['c1', 'c2', 'c3', 'c4', 'c5']) {
-                estado[c] = lerpColor(a[c], b[c], t);
-            }
-            return estado;
+            const t = ((h >= a.hora ? h : h + 24) - a.hora) / (fin - a.hora);
+            const e = {};
+            for (const c of ['c1', 'c2', 'c3', 'c4', 'c5']) e[c] = lerpColor(a[c], b[c], t);
+            return e;
         }
 
-        function actualizarCielo(horaDecimal) {
-            const cielo = cieloEnHora(horaDecimal);
-
-            rootStyle.setProperty('--color-1', cielo.c1);
-            rootStyle.setProperty('--color-2', cielo.c2);
-            rootStyle.setProperty('--color-3', cielo.c3);
-            rootStyle.setProperty('--color-4', cielo.c4);
-            rootStyle.setProperty('--color-5', cielo.c5);
-
-            // Control de elementos nocturnos y diurnos
-            let opacidadEstrellas = 0;
-            let factorNubes = 0.8;
-            let intensidadFarolas = 0;
-            let opacidadVentanas = 0.2;
-            let colorTexto = '#0f172a';
-
-            if (horaDecimal < 6 || horaDecimal > 20.5) {
-                // Noche profunda
-                opacidadEstrellas = 1;
-                factorNubes = 0.25;
-                intensidadFarolas = 1;
-                opacidadVentanas = 0.95;
-                colorTexto = '#f8fafc';
-            } else if (horaDecimal >= 6 && horaDecimal <= 8) {
-                // Amanecer
-                opacidadEstrellas = Math.max(0, 1 - (horaDecimal - 6) / 2);
-                factorNubes = 0.55;
-                intensidadFarolas = Math.max(0, 1 - (horaDecimal - 6) / 1.5);
-                opacidadVentanas = 0.3;
-                colorTexto = '#0f172a';
-            } else if (horaDecimal >= 19.5 && horaDecimal <= 20.5) {
-                // Atardecer
-                opacidadEstrellas = Math.min(1, (horaDecimal - 19.5));
-                factorNubes = 0.6;
-                intensidadFarolas = Math.min(1, (horaDecimal - 19.5) * 2);
-                opacidadVentanas = 0.8;
-                colorTexto = '#f8fafc';
-            }
-
-            rootStyle.setProperty('--opacidad-estrellas', opacidadEstrellas);
-            rootStyle.setProperty('--opacidad-nubes', factorNubes);
-            rootStyle.setProperty('--brillo-nubes', `${factorNubes * 120}%`);
-            rootStyle.setProperty('--luz-farolas', intensidadFarolas);
-            rootStyle.setProperty('--luces-ventanas', opacidadVentanas);
-            rootStyle.setProperty('--color-texto', colorTexto);
-
-            // Formato de reloj de 12 horas
-            let horas = Math.floor(horaDecimal);
-            let minutos = Math.round((horaDecimal - horas) * 60);
-
-            if (minutos === 60) {
-                horas = (horas + 1) % 24;
-                minutos = 0;
-            }
-
-            let minutosStr = minutos < 10 ? '0' + minutos : minutos;
-            let sufijo = horas >= 12 ? 'PM' : 'AM';
-            let hora12 = horas % 12;
-            hora12 = hora12 === 0 ? 12 : hora12;
-
-            if (textoHora) {
-                textoHora.textContent = `${hora12}:${minutosStr} ${sufijo}`;
-            }
-        }
-
-        // Inicialización con hora del sistema
-        const ahora = new Date();
-        let horaActual = ahora.getHours() + ahora.getMinutes() / 60 + ahora.getSeconds() / 3600;
-        slider.value = horaActual;
-        actualizarCielo(horaActual);
-
-        slider.addEventListener('input', (e) => {
-            modoManual = true;
-            horaActual = parseFloat(e.target.value);
-            actualizarCielo(horaActual);
+        // ================================================================
+        //  HORA DE GRANADA
+        // ================================================================
+        const fmtZona = new Intl.DateTimeFormat('en-US', {
+            timeZone: CONFIG.zonaHoraria, hourCycle: 'h23',
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
         });
+        const cacheDesfase = new Map();
+        function desfaseMin(ms) {
+            const k = Math.floor(ms / 3600e3);
+            if (cacheDesfase.has(k)) return cacheDesfase.get(k);
+            const p = {};
+            for (const { type, value } of fmtZona.formatToParts(new Date(k * 3600e3))) p[type] = +value;
+            const comoUTC = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+            const d = Math.round((comoUTC - k * 3600e3) / 60000);
+            if (cacheDesfase.size > 500) cacheDesfase.clear();
+            cacheDesfase.set(k, d);
+            return d;
+        }
+        function horaLocal(ms) {
+            const l = new Date(ms + desfaseMin(ms) * 60000);
+            return {
+                y: l.getUTCFullYear(), mes: l.getUTCMonth(), dia: l.getUTCDate(), dow: l.getUTCDay(),
+                horas: l.getUTCHours() + l.getUTCMinutes() / 60 + l.getUTCSeconds() / 3600 + l.getUTCMilliseconds() / 3600e3
+            };
+        }
+        function msDesdeLocal(y, mes, dia, horas) {
+            let ms = Date.UTC(y, mes, dia) + horas * 3600e3;
+            for (let i = 0; i < 2; i++) ms = Date.UTC(y, mes, dia) + horas * 3600e3 - desfaseMin(ms) * 60000;
+            return ms;
+        }
+        function diaDelAno(ms) {
+            const l = horaLocal(ms);
+            return Math.floor((Date.UTC(l.y, l.mes, l.dia) - Date.UTC(l.y, 0, 0)) / 864e5);
+        }
 
-        botonesVel.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                botonesVel.forEach(b => b.classList.remove('activo'));
-                e.target.classList.add('activo');
-                velocidad = parseFloat(e.target.dataset.vel);
-                modoManual = false;
+        // ================================================================
+        //  ASTRONOMÍA (precisión de ~1°, suficiente para ver el cielo real)
+        // ================================================================
+        const diasJ2000 = ms => ms / 864e5 + 2440587.5 - 2451545.0;
+
+        function solEcuatorial(n) {
+            const L = 280.460 + 0.9856474 * n;
+            const g = (357.528 + 0.9856003 * n) * RAD;
+            const lam = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * RAD;
+            const eps = (23.439 - 0.0000004 * n) * RAD;
+            return { ra: Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam)), dec: Math.asin(Math.sin(eps) * Math.sin(lam)), lon: lam };
+        }
+
+        function lunaEcuatorial(n) {
+            const L = (218.316 + 13.176396 * n) * RAD;
+            const M = (134.963 + 13.064993 * n) * RAD;
+            const F = (93.272 + 13.229350 * n) * RAD;
+            const lam = L + 6.289 * RAD * Math.sin(M);
+            const beta = 5.128 * RAD * Math.sin(F);
+            const eps = 23.439 * RAD;
+            return {
+                ra: Math.atan2(Math.sin(lam) * Math.cos(eps) - Math.tan(beta) * Math.sin(eps), Math.cos(lam)),
+                dec: Math.asin(Math.sin(beta) * Math.cos(eps) + Math.cos(beta) * Math.sin(eps) * Math.sin(lam)),
+                lon: lam
+            };
+        }
+
+        function horizontales(ra, dec, lstGrados) {
+            let H = lstGrados * RAD - ra;
+            H = Math.atan2(Math.sin(H), Math.cos(H));
+            const phi = CONFIG.latitud * RAD;
+            const e = Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H));
+            const az = Math.atan2(-Math.sin(H) * Math.cos(dec), Math.cos(phi) * Math.sin(dec) - Math.sin(phi) * Math.cos(dec) * Math.cos(H));
+            const eMax = 90 - Math.abs(CONFIG.latitud - dec * DEG);
+            const Hs = Math.acos(clamp(-Math.tan(phi) * Math.tan(dec), -1, 1));
+            return { e: e * DEG, az: ((az * DEG) + 360) % 360, H, Hs, eMax };
+        }
+
+        // ================================================================
+        //  TRAYECTORIA EN PANTALLA
+        //  La altura del astro en pantalla sale de su elevación real; la x
+        //  lo pega a los laterales mientras está a media altura y solo cruza
+        //  por arriba cerca del mediodía. Nunca entra en la zona central.
+        // ================================================================
+        function elevVisual(e, eMax) {
+            if (e <= 0) return e;
+            const s = Math.min(e / eMax, 1);
+            return e + (CONFIG.gradosCima - eMax) * s * s * (3 - 2 * s);
+        }
+
+        function posicionPantalla(astro) {
+            const ed = elevVisual(astro.e, astro.eMax);
+            const s = ed / CONFIG.gradosCima;
+            const y = CONFIG.horizonte + (CONFIG.cimaY - CONFIG.horizonte) * s;
+            const q = Math.abs(astro.H) / Math.max(astro.Hs, 0.2);
+            const u = Math.min(q / 0.62, 1);
+            const f = u * u * (3 - 2 * u);
+            const seguro = 0.30 * (1 - ss(0.70, 0.98, clamp(s, 0, 1)));   // mínimo de separación mientras está bajo
+            let off = Math.max(CONFIG.margenX * f, seguro);
+            if (q > 1) off = CONFIG.margenX + (q - 1) * 0.15;
+            const lado = astro.H < 0 ? -1 : 1;                           // mañana a la izquierda
+            return { x: 0.5 + lado * off, y, ed };
+        }
+
+        function dirPantalla(x, edGrados, aspecto) {
+            const az = (x - 0.5) * aspecto * GRADOS_POR_Y * RAD, el = edGrados * RAD;
+            return [Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el)];
+        }
+
+        function dirLuz(astro) {
+            // Luz sobre el paisaje: el lado (izquierda por la mañana, derecha por la tarde) y la
+            // altura son los reales; la componente frontal se toma siempre hacia el espectador
+            // para que las fachadas encaladas reciban el sol, como en las fotos desde San Nicolás.
+            const rel = (astro.az - CONFIG.azimutCamara) * RAD, el = astro.e * RAD;
+            return [Math.sin(rel) * Math.cos(el), Math.sin(el), Math.abs(Math.cos(rel)) * Math.cos(el) * 0.85];
+        }
+
+        // Matriz cámara → ecuatorial (para que las estrellas giren alrededor del polo)
+        function matrizEcuatorial(lstGrados) {
+            const A = CONFIG.azimutCamara * RAD, phi = CONFIG.latitud * RAD, L = lstGrados * RAD;
+            const R = [Math.cos(A), -Math.sin(A), 0], U = [0, 0, 1], B = [-Math.sin(A), -Math.cos(A), 0];
+            const XH = [0, -Math.sin(phi), Math.cos(phi)], YH = [-1, 0, 0], ZH = [0, Math.cos(phi), Math.sin(phi)];
+            const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+            const cols = [R, U, B].map(c => {
+                const cx = dot(c, XH), cy = dot(c, YH), cz = dot(c, ZH);
+                return [Math.cos(L) * cx + Math.sin(L) * cy, Math.sin(L) * cx - Math.cos(L) * cy, cz];
             });
-        });
+            return new Float32Array([...cols[0], ...cols[1], ...cols[2]]);  // column-major
+        }
 
-        let ultimoFrame = performance.now();
+        // ================================================================
+        //  ATMÓSFERA EN JS (misma física que el shader, para luces y exposición)
+        // ================================================================
+        const ATM = { Rp: 6371e3, Ra: 6471e3, bR: [5.8e-6, 13.5e-6, 33.1e-6], bM: 8e-6, bO: [0.65e-6, 1.881e-6, 0.085e-6], HR: 8000, HM: 1200, g: 0.80 };
+        function rsi(o, d, r) {
+            const b = 2 * (o[0] * d[0] + o[1] * d[1] + o[2] * d[2]);
+            const c = o[0] * o[0] + o[1] * o[1] + o[2] * o[2] - r * r;
+            const D = b * b - 4 * c;
+            if (D < 0) return null;
+            const s = Math.sqrt(D);
+            return [(-b - s) / 2, (-b + s) / 2];
+        }
+        function profOptica(o, d, pasos) {
+            const g = rsi(o, d, ATM.Rp);
+            if (g && g[0] > 0) return null;
+            const a = rsi(o, d, ATM.Ra);
+            if (!a) return [0, 0, 0];
+            const ds = a[1] / pasos;
+            let r = 0, m = 0, z = 0;
+            for (let i = 0; i < pasos; i++) {
+                const t = (i + 0.5) * ds;
+                const h = Math.hypot(o[0] + d[0] * t, o[1] + d[1] * t, o[2] + d[2] * t) - ATM.Rp;
+                r += Math.exp(-h / ATM.HR); m += Math.exp(-h / ATM.HM); z += Math.max(0, 1 - Math.abs(h - 25e3) / 15e3);
+            }
+            return [r * ds, m * ds, z * ds];
+        }
+        function transmitancia(altura, eGrados) {
+            const e = eGrados * RAD;
+            const q = profOptica([0, ATM.Rp + altura, 0], [Math.cos(e), Math.sin(e), 0], 32);
+            if (!q) return [0, 0, 0];
+            return [0, 1, 2].map(i => Math.exp(-(ATM.bR[i] * q[0] + ATM.bM * 1.1 * q[1] + ATM.bO[i] * q[2])));
+        }
+        function cieloJS(rd, sd) {
+            const o = [0, ATM.Rp + 800, 0];
+            let L = rsi(o, rd, ATM.Ra)[1];
+            const g = rsi(o, rd, ATM.Rp);
+            if (g && g[0] > 0) L = Math.min(L, g[0]);
+            const mu = rd[0] * sd[0] + rd[1] * sd[1] + rd[2] * sd[2], gg = ATM.g * ATM.g;
+            const pR = 3 / (16 * Math.PI) * (1 + mu * mu);
+            const pM = 3 / (8 * Math.PI) * ((1 - gg) * (mu * mu + 1)) / (Math.pow(1 + gg - 2 * mu * ATM.g, 1.5) * (2 + gg));
+            const tR = [0, 0, 0], tM = [0, 0, 0];
+            let oR = 0, oM = 0, oO = 0, prev = 0;
+            for (let i = 0; i < 12; i++) {
+                const f = (i + 1) / 12, t1 = L * f * f, ds = t1 - prev, tm = prev + ds / 2;
+                prev = t1;
+                const p = [o[0] + rd[0] * tm, o[1] + rd[1] * tm, o[2] + rd[2] * tm];
+                const h = Math.hypot(p[0], p[1], p[2]) - ATM.Rp;
+                const dR = Math.exp(-h / ATM.HR) * ds, dM = Math.exp(-h / ATM.HM) * ds;
+                oR += dR; oM += dM; oO += Math.max(0, 1 - Math.abs(h - 25e3) / 15e3) * ds;
+                const q = profOptica(p, sd, 5);
+                if (!q) continue;
+                for (let c = 0; c < 3; c++) {
+                    const at = Math.exp(-(ATM.bR[c] * (oR + q[0]) + ATM.bM * 1.1 * (oM + q[1]) + ATM.bO[c] * (oO + q[2])));
+                    tR[c] += dR * at; tM[c] += dM * at;
+                }
+            }
+            return [0, 1, 2].map(c => 22 * (pR * ATM.bR[c] * tR[c] + pM * ATM.bM * tM[c]));
+        }
+        const DIRS_AMB = [[0, 1, 0]].concat([0, 1, 2, 3, 4, 5].map(k => {
+            const a = k / 6 * 2 * Math.PI, el = 20 * RAD;
+            return [Math.cos(a) * Math.cos(el), Math.sin(el), Math.sin(a) * Math.cos(el)];
+        }));
+        function ambienteCielo(eGrados) {
+            const e = eGrados * RAD, sd = [Math.cos(e), Math.sin(e), 0], s = [0, 0, 0];
+            for (const d of DIRS_AMB) { const v = cieloJS(d, sd); for (let c = 0; c < 3; c++) s[c] += v[c] / DIRS_AMB.length; }
+            return s;
+        }
+        const acesJS = x => clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0, 1);
 
-        function bucle(timestamp) {
-            const delta = (timestamp - ultimoFrame) / 1000;
-            ultimoFrame = timestamp;
+        // ================================================================
+        //  RELIEVE EN JS (para saber cuándo el sol queda tras las montañas)
+        // ================================================================
+        function hash12(px, py) {
+            let x = fract(px * 0.1031), y = fract(py * 0.1031), z = fract(px * 0.1031);
+            const d = x * (y + 33.33) + y * (z + 33.33) + z * (x + 33.33);
+            x += d; y += d; z += d;
+            return fract((x + y) * z);
+        }
+        function noise1(x) { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return mix(hash12(i, 1.7), hash12(i + 1, 1.7), u); }
+        function fbm1(x) { let s = 0, a = 0.5; for (let i = 0; i < 4; i++) { s += a * noise1(x); x = x * 2.03 + 3.1; a *= 0.5; } return s; }
+        const gauss = (x, c, w) => { const d = (x - c) / w; return Math.exp(-d * d); };
+        const pico = (x, c, w, h) => h * Math.pow(Math.max(0, 1 - Math.abs(x - c) / w), 1.6);
+        function sierraY(xv, panAsp) {
+            const nx = xv * panAsp;
+            const y = 0.207 + 0.010 * gauss(xv, 0.10, 0.08) + 0.006 * gauss(xv, 0.20, 0.05) + 0.010 * gauss(xv, 0.50, 0.16)
+                + 0.018 * gauss(xv, 0.74, 0.11) + pico(xv, 0.62, 0.04, 0.008) + pico(xv, 0.69, 0.05, 0.016)
+                + pico(xv, 0.785, 0.06, 0.030) + pico(xv, 0.845, 0.035, 0.022) - 0.006 * ss(0.88, 0.95, xv);
+            let r = 0, a = 0.5, f = 5.0;
+            for (let i = 0; i < 6; i++) { const n = noise1(nx * f + i * 7.3); r += a * (1 - Math.abs(2 * n - 1)); a *= 0.55; f *= 2.05; }
+            return y + (r - 0.5) * (0.003 + 0.014 * ss(0, 0.03, y - 0.207));
+        }
+        function colinasY(xv, panAsp) {
+            const nx = xv * panAsp;
+            return 0.176 + 0.014 * gauss(xv, 0.60, 0.16) + 0.006 * gauss(xv, 0.08, 0.10) - 0.016 * ss(0.80, 0.98, xv)
+                + (fbm1(nx * 2.6) - 0.5) * 0.012 + (noise1(nx * 30) - 0.5) * 0.0015;
+        }
 
-            if (!modoManual && velocidad > 0) {
-                horaActual = (horaActual + (delta * velocidad) / 3600) % 24;
-                slider.value = horaActual;
-                actualizarCielo(horaActual);
+        // ================================================================
+        //  PAISAJE PINTADO: Alhambra, Generalife, Albaicín y la ciudad
+        //  Se pintan tres lienzos alineados:
+        //    · albedo (color de la superficie)
+        //    · emisivo (luces nocturnas)
+        //    · info (R = distancia, G = orientación, B = tipo / id de ventana)
+        //  El shader los ilumina con la luz real de cada momento.
+        // ================================================================
+        const TIPO = { muro: 0, tejado: 0.25, veg: 0.38 };
+        const infoColor = (prof, cara, tipo) => `rgb(${Math.round(prof * 255)},${Math.round(cara * 255)},${Math.round(tipo * 255)})`;
+
+        function mulberry32(seed) {
+            let s = seed >>> 0;
+            return () => {
+                s = (s + 0x6D2B79F5) >>> 0;
+                let t = s;
+                t = Math.imul(t ^ (t >>> 15), t | 1);
+                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        function curva(pts) {
+            return x => {
+                if (x <= pts[0][0]) return pts[0][1];
+                for (let i = 0; i < pts.length - 1; i++) {
+                    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1];
+                    if (x <= x1) { const t = (x - x0) / (x1 - x0); return y0 + (y1 - y0) * (1 - Math.cos(t * Math.PI)) / 2; }
+                }
+                return pts[pts.length - 1][1];
+            };
+        }
+
+        function tono(hex, k) {
+            const [r, g, b] = hexARgb(hex);
+            return `rgb(${clamp(Math.round(r * k), 0, 255)},${clamp(Math.round(g * k), 0, 255)},${clamp(Math.round(b * k), 0, 255)})`;
+        }
+
+        class Lienzo {
+            constructor(w, h) {
+                this.w = w; this.h = h;
+                const crear = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+                this.alb = crear(); this.emi = crear(); this.inf = crear();
+                this.cA = this.alb.getContext('2d');
+                this.cE = this.emi.getContext('2d');
+                this.cI = this.inf.getContext('2d');
+                this.cE.fillStyle = '#000'; this.cE.fillRect(0, 0, w, h);
+                this.cI.fillStyle = '#000'; this.cI.fillRect(0, 0, w, h);
+            }
+            // Rellena la misma forma en los tres lienzos
+            forma(trazo, m) {
+                const capas = [[this.cA, m.alb], [this.cE, m.emi || '#000'], [this.cI, infoColor(...m.inf)]];
+                for (const [c, estilo] of capas) {
+                    c.beginPath(); trazo(c);
+                    c.fillStyle = typeof estilo === 'function' ? estilo(c) : estilo;
+                    c.fill();
+                }
+                if (m.textura) this.texturar(trazo, m.textura, m.texturaAlfa ?? 0.5);
+            }
+            rect(x, y, w, h, m) { this.forma(c => c.rect(x, y, w, h), m); }
+            poly(pts, m) { this.forma(c => { c.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]); c.closePath(); }, m); }
+            // Superpone un patrón (tejas, piedra) solo en el albedo
+            texturar(trazo, patron, alfa) {
+                const c = this.cA;
+                c.save(); c.beginPath(); trazo(c); c.clip();
+                c.globalAlpha = alfa; c.fillStyle = patron; c.fillRect(0, 0, this.w, this.h);
+                c.restore();
+            }
+            // Abre un hueco (arco de campanario) solo en el albedo
+            hueco(trazo) {
+                const c = this.cA;
+                c.save(); c.globalCompositeOperation = 'destination-out'; c.beginPath(); trazo(c); c.fill(); c.restore();
+            }
+            // Muchas copas de árbol de una vez (agrupadas por color)
+            copas(lista, prof) {
+                const porColor = new Map();
+                for (const b of lista) { if (!porColor.has(b.c)) porColor.set(b.c, []); porColor.get(b.c).push(b); }
+                const trazarTodas = (c, arr) => { c.beginPath(); for (const b of arr) { c.moveTo(b.x + b.r, b.y); c.arc(b.x, b.y, b.r, 0, Math.PI * 2); } };
+                trazarTodas(this.cE, lista); this.cE.fillStyle = '#000'; this.cE.fill();
+                trazarTodas(this.cI, lista); this.cI.fillStyle = infoColor(prof, 0.5, TIPO.veg); this.cI.fill();
+                for (const [color, arr] of porColor) { trazarTodas(this.cA, arr); this.cA.fillStyle = color; this.cA.fill(); }
+            }
+        }
+
+        function patrones(L, u) {
+            const crearPatron = (w, h, dibujar) => {
+                const c = document.createElement('canvas');
+                c.width = Math.max(2, Math.round(w)); c.height = Math.max(2, Math.round(h));
+                dibujar(c.getContext('2d'), c.width, c.height);
+                return L.cA.createPattern(c, 'repeat');
+            };
+            const rnd = mulberry32(77);
+            // Teja árabe: canales verticales con hiladas y algún liquen
+            const teja = crearPatron(Math.max(4, u * 2.6) * 8, Math.max(4, u * 3.4) * 6, (c, w, h) => {
+                const cw = w / 8, ch = h / 6;
+                for (let i = 0; i < 8; i++) {
+                    c.fillStyle = i % 2 ? 'rgba(60,20,8,0.55)' : 'rgba(255,205,170,0.22)';
+                    c.fillRect(i * cw, 0, cw * 0.55, h);
+                }
+                c.fillStyle = 'rgba(40,12,5,0.35)';
+                for (let j = 0; j < 6; j++) c.fillRect(0, j * ch, w, Math.max(1, ch * 0.16));
+                for (let k = 0; k < 10; k++) { c.fillStyle = `rgba(${90 + rnd() * 60},${80 + rnd() * 40},50,${0.25 + rnd() * 0.3})`; c.fillRect(rnd() * w, rnd() * h, cw * 0.6, ch * 0.5); }
+            });
+            // Piedra: sillares e hiladas sutiles
+            const piedra = crearPatron(Math.max(8, u * 26), Math.max(8, u * 20), (c, w, h) => {
+                for (let k = 0; k < 140; k++) {
+                    const v = rnd();
+                    c.fillStyle = v < 0.5 ? `rgba(60,25,12,${0.08 + rnd() * 0.18})` : `rgba(255,220,190,${0.06 + rnd() * 0.12})`;
+                    c.fillRect(rnd() * w, rnd() * h, 1 + rnd() * u * 1.6, 1 + rnd() * u * 0.9);
+                }
+                c.fillStyle = 'rgba(50,20,10,0.16)';
+                for (let j = 0; j < 4; j++) c.fillRect(0, j * h / 4, w, Math.max(1, u * 0.35));
+            });
+            // Cal: manchas suaves de humedad y desconchones
+            const cal = crearPatron(Math.max(8, u * 30), Math.max(8, u * 30), (c, w, h) => {
+                for (let k = 0; k < 40; k++) {
+                    c.fillStyle = `rgba(120,100,80,${0.04 + rnd() * 0.08})`;
+                    c.beginPath(); c.ellipse(rnd() * w, rnd() * h, 1 + rnd() * u * 3, 1 + rnd() * u * 1.5, 0, 0, Math.PI * 2); c.fill();
+                }
+            });
+            return { teja, piedra, cal };
+        }
+
+        // Paleta de hoja caduca según la estación: [sombra, medio, luz]
+        function paletaCaduca(doy) {
+            if (doy >= 285 && doy < 340) {   // otoño: olmos y álamos dorados, apagados por la distancia
+                const t = ss(285, 315, doy);
+                return t < 0.5
+                    ? [['#323419', '#3a3b1b'], ['#4c4a21', '#565224'], ['#6a632b', '#736a2e']]
+                    : [['#3d3418', '#45391a'], ['#5e4f20', '#6a5823'], ['#7d6a2c', '#86722f']];
+            }
+            if (doy >= 340 || doy < 75) return [['#3a342c', '#40392f'], ['#4f463a', '#574d40'], ['#655a4b', '#6d6150']];
+            if (doy < 135) return [['#2a3a1c', '#2f411f'], ['#41592a', '#4a632e'], ['#5f7c38', '#6a873e']];
+            return [['#1f2b18', '#22301a'], ['#2f3f22', '#344626'], ['#435733', '#4a5f37']];
+        }
+
+        function pintarPaisaje(cssW, cssH, dpr, doy) {
+            const band = CONFIG.banda;
+            const W = Math.max(2, Math.round(cssW * dpr));
+            const Hs = Math.max(2, Math.round(cssH * dpr));
+            const H = Math.max(2, Math.round(Hs * band));
+            const L = new Lienzo(W, H);
+            const Wv = Math.max(W, 1.6 * Hs);
+            const off = (Wv - W) / 2;
+            const X = xv => xv * Wv - off;
+            const Y = y => (band - y) * Hs;
+            const S = v => v * Hs;
+            const u = Hs / 1000;                       // unidad de detalle (1 px a 1000 px de alto)
+            const pix = v => Math.round(v);
+            const PAT = patrones(L, Math.max(1, u * 1.2));
+            const pick = (arr, r) => arr[Math.floor(r() * arr.length)];
+
+            const PIEDRA = ['#b06a48', '#a8623f', '#b8734f', '#a05d3d'];
+            const CAL = ['#eee8dc', '#f2ede4', '#e9e1d1', '#efe6d3', '#e7e2da', '#ebdcc4', '#f0e2c8'];
+            const TEJA = ['#9c5a3c', '#8e5236', '#a4644a', '#87503a', '#a06048', '#93604a'];
+            const CIPRES = ['#1b291c', '#1f2f20', '#223322', '#19261a'];
+            const VERDE = ['#26381f', '#2c4024', '#22331c', '#31462a', '#1f2e1a'];
+
+            // Luz de los focos de la Alhambra: dorada abajo, más tenue arriba
+            const foco = (yb, yt, k = 1) => c => {
+                const g = c.createLinearGradient(0, yb, 0, yt);
+                g.addColorStop(0, `rgb(${Math.round(240 * k)},${Math.round(146 * k)},${Math.round(70 * k)})`);
+                g.addColorStop(1, `rgb(${Math.round(128 * k)},${Math.round(68 * k)},${Math.round(30 * k)})`);
+                return g;
+            };
+
+            // ------------------------------------------------------------
+            // 1. Colina de la Sabika (base)
+            // ------------------------------------------------------------
+            const cresta = curva([[-0.06, 0.110], [0.03, 0.122], [0.09, 0.134], [0.16, 0.143], [0.26, 0.147], [0.36, 0.149],
+            [0.46, 0.151], [0.54, 0.153], [0.60, 0.158], [0.66, 0.167], [0.72, 0.175], [0.78, 0.178], [0.84, 0.170],
+            [0.90, 0.155], [0.96, 0.140], [1.06, 0.128]]);
+            {
+                const pts = [];
+                for (let x = -0.08; x <= 1.08; x += 0.004) pts.push([X(x), Y(cresta(x))]);
+                pts.push([X(1.08), Y(-0.01)], [X(-0.08), Y(-0.01)]);
+                L.poly(pts, { alb: '#22301c', inf: [0.45, 0.5, TIPO.veg] });
             }
 
+            // ------------------------------------------------------------
+            // 2. Alhambra
+            // ------------------------------------------------------------
+            const rA = mulberry32(1492);
+            const PROF_A = 0.40;
+
+            const almenas = (x0, x1, yTop, tipo = 'cuadrada') => {
+                const paso = S(0.0056), ancho = S(0.003), alto = S(tipo === 'pico' ? 0.0046 : 0.0032);
+                for (let x = x0 + paso * 0.3; x + ancho <= x1; x += paso) {
+                    if (tipo === 'pico') L.poly([[x, yTop], [x + ancho, yTop], [x + ancho / 2, yTop - alto]], { alb: pick(PIEDRA, rA), emi: foco(yTop + alto * 4, yTop - alto, 0.55), inf: [PROF_A, 0.5, TIPO.muro] });
+                    else L.rect(x, yTop - alto, ancho, alto, { alb: pick(PIEDRA, rA), emi: foco(yTop + alto * 4, yTop - alto, 0.55), inf: [PROF_A, 0.5, TIPO.muro] });
+                }
+            };
+
+            const ventanaArco = (xc, yb, w, h, prof, luz = null) => {
+                L.forma(c => { c.rect(xc - w / 2, yb - h + w / 2, w, h - w / 2); c.moveTo(xc + w / 2, yb - h + w / 2); c.arc(xc, yb - h + w / 2, w / 2, 0, Math.PI, true); },
+                    { alb: '#2f1d16', emi: luz || '#000', inf: [prof, 0.5, TIPO.muro] });
+            };
+
+            const torre = o => {
+                const base = cresta(o.x) - 0.010;
+                const xc = X(o.x), w = S(o.w);
+                const x0 = xc - w / 2, x1 = xc + w / 2;
+                const yb = Y(base), yt = Y(cresta(o.x) + o.h);
+                const col = o.color || pick(PIEDRA, rA);
+                const prof = o.prof ?? PROF_A;
+                const conFoco = o.foco !== false;
+                if (o.lado) {
+                    const sw = w * 0.26;
+                    const pts = o.lado < 0 ? [[x0, yb], [x0, yt], [x0 - sw, yt + sw * 0.18], [x0 - sw, yb]]
+                        : [[x1, yb], [x1, yt], [x1 + sw, yt + sw * 0.18], [x1 + sw, yb]];
+                    L.poly(pts, { alb: tono(col, 0.94), emi: conFoco ? foco(yb, yt, 0.6) : null, inf: [prof, o.lado < 0 ? 0.12 : 0.88, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.6 });
+                }
+                L.rect(x0, yt, w, yb - yt, { alb: col, emi: conFoco ? foco(yb, yt) : null, inf: [prof, 0.5, TIPO.muro], textura: o.cal ? PAT.cal : PAT.piedra, texturaAlfa: 0.6 });
+                if (o.almenas) almenas(x0, x1, yt, o.almenas);
+                if (o.techo) {
+                    const th = S(o.techo);
+                    L.poly([[x0 - u, yt], [x1 + u, yt], [xc, yt - th]], { alb: pick(TEJA, rA), inf: [prof, 0.5, TIPO.tejado], textura: PAT.teja, texturaAlfa: 0.45 });
+                }
+                for (let i = 0; i < (o.ventanas || 0); i++) {
+                    const vx = x0 + w * (i + 1) / ((o.ventanas || 0) + 1);
+                    ventanaArco(vx, yt + (yb - yt) * 0.32, S(0.0034), S(0.0068), prof);
+                }
+                return { x0, x1, yt, yb, xc, w };
+            };
+
+            const muralla = (xa, xb, alto, conAlmenas = true) => {
+                const pts = [];
+                for (let x = xa; x <= xb + 1e-9; x += 0.003) pts.push([X(x), Y(cresta(x) + alto)]);
+                for (let x = xb; x >= xa - 1e-9; x -= 0.003) pts.push([X(x), Y(cresta(x) - 0.012)]);
+                const yb = Y(cresta(xa) - 0.012), yt = Y(cresta(xa) + alto);
+                L.poly(pts, { alb: pick(PIEDRA, rA), emi: foco(yb, yt, 0.9), inf: [PROF_A, 0.5, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.6 });
+                if (conAlmenas) {
+                    const paso = S(0.0056), ancho = S(0.003), aM = S(0.0032);
+                    for (let px = X(xa) + paso * 0.4; px < X(xb) - ancho; px += paso) {
+                        const xvLocal = (px + off) / Wv;
+                        const yTop = Y(cresta(xvLocal) + alto);
+                        L.rect(px, yTop - aM, ancho, aM + 1, { alb: pick(PIEDRA, rA), emi: foco(yTop + aM * 3, yTop - aM, 0.5), inf: [PROF_A, 0.5, TIPO.muro] });
+                    }
+                }
+            };
+
+            const tejado = (x0, x1, yt, alto, prof, voladizo = 0) => {
+                const t = S(alto), v = S(voladizo);
+                L.poly([[x0 - v, yt], [x1 + v, yt], [x1 - t * 1.6, yt - t], [x0 + t * 1.6, yt - t]],
+                    { alb: pick(TEJA, rA), inf: [prof, 0.5, TIPO.tejado], textura: PAT.teja, texturaAlfa: 0.5 });
+            };
+
+            // Palacio de Carlos V (detrás de la muralla)
+            {
+                const xc = X(0.205), w = S(0.072), yb = Y(cresta(0.205) - 0.004), yt = Y(cresta(0.205) + 0.036);
+                L.rect(xc - w / 2, yt, w, yb - yt, { alb: '#c39272', emi: foco(yb, yt, 0.7), inf: [0.41, 0.5, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.45 });
+                for (let f = 0; f < 2; f++) for (let i = 0; i < 9; i++) {
+                    const vx = pix(xc - w / 2 + w * (i + 0.6) / 9.2), vy = pix(yt + (yb - yt) * (0.22 + f * 0.32));
+                    L.rect(vx, vy, Math.max(1, pix(S(0.0026))), Math.max(2, pix(S(0.0055))), { alb: '#3a2a22', inf: [0.41, 0.5, TIPO.muro] });
+                }
+                tejado(xc - w / 2, xc + w / 2, yt, 0.006, 0.41, 0.0012);
+            }
+            // Iglesia de Santa María de la Alhambra
+            torre({ x: 0.300, w: 0.013, h: 0.050, techo: 0.010, lado: 1, color: '#c08b68', cal: true });
+            // Palacios Nazaríes: cubiertas de teja
+            for (const [x, w, h] of [[0.288, 0.034, 0.030], [0.322, 0.030, 0.026]]) {
+                const xc = X(x), ww = S(w), yb = Y(cresta(x) - 0.006), yt = Y(cresta(x) + h);
+                L.rect(xc - ww / 2, yt, ww, yb - yt, { alb: pick(PIEDRA, rA), emi: foco(yb, yt, 0.8), inf: [PROF_A, 0.5, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.55 });
+                tejado(xc - ww / 2, xc + ww / 2, yt, 0.007, PROF_A, 0.001);
+            }
+
+            // Murallas
+            muralla(0.072, 0.178, 0.022);
+            muralla(0.172, 0.562, 0.016);
+
+            // Torres de la Alcazaba
+            const vela = torre({ x: 0.094, w: 0.034, h: 0.050, almenas: 'cuadrada', lado: -1, ventanas: 2 });
+            {   // espadaña con la campana de la Vela
+                const ew = S(0.011), eh = S(0.012), ex = vela.xc + S(0.004);
+                L.rect(ex - ew / 2, vela.yt - eh - S(0.0032), ew, eh, { alb: '#c48a6a', emi: foco(vela.yt, vela.yt - eh, 0.75), inf: [PROF_A, 0.5, TIPO.muro] });
+                L.hueco(c => { const aw = ew * 0.5, ab = vela.yt - S(0.0032) - eh * 0.18; c.rect(ex - aw / 2, ab - eh * 0.45, aw, eh * 0.45); c.moveTo(ex + aw / 2, ab - eh * 0.45); c.arc(ex, ab - eh * 0.45, aw / 2, 0, Math.PI, true); });
+                L.poly([[ex - ew * 0.16, vela.yt - S(0.0032) - eh * 0.25], [ex + ew * 0.16, vela.yt - S(0.0032) - eh * 0.25], [ex + ew * 0.12, vela.yt - S(0.0032) - eh * 0.6], [ex - ew * 0.12, vela.yt - S(0.0032) - eh * 0.6]],
+                    { alb: '#4a3a22', inf: [PROF_A, 0.5, TIPO.muro] });
+            }
+            torre({ x: 0.128, w: 0.020, h: 0.036, almenas: 'cuadrada' });
+            torre({ x: 0.160, w: 0.025, h: 0.054, almenas: 'cuadrada', lado: -1, ventanas: 1 });
+            // Torre de Comares
+            torre({ x: 0.258, w: 0.046, h: 0.060, almenas: 'cuadrada', lado: -1, ventanas: 3 });
+            // Torre de las Damas con su pórtico
+            {
+                const d = torre({ x: 0.356, w: 0.030, h: 0.034, almenas: 'cuadrada', lado: -1 });
+                const n = 5, aw = d.w / (n + 1.2);
+                for (let i = 0; i < n; i++) ventanaArco(d.x0 + d.w * (i + 0.85) / (n + 0.7), d.yb - (d.yb - d.yt) * 0.14, aw * 0.72, (d.yb - d.yt) * 0.36, PROF_A, 'rgb(255,190,110)');
+            }
+            torre({ x: 0.386, w: 0.012, h: 0.022, almenas: 'cuadrada' });
+            torre({ x: 0.425, w: 0.024, h: 0.042, almenas: 'pico', lado: 1, ventanas: 1 });   // Torre de los Picos
+            torre({ x: 0.462, w: 0.018, h: 0.030, almenas: 'cuadrada' });                    // la Cautiva
+            torre({ x: 0.498, w: 0.022, h: 0.034, almenas: 'cuadrada', lado: 1, ventanas: 1 }); // las Infantas
+            torre({ x: 0.533, w: 0.015, h: 0.024, almenas: 'cuadrada' });
+
+            // ------------------------------------------------------------
+            // 3. Generalife y sus cipreses
+            // ------------------------------------------------------------
+            {
+                const rG = mulberry32(1319);
+                const cip = [];
+                for (let x = 0.585; x < 0.765; x += 0.0045 + rG() * 0.004) cip.push([x, 0.018 + rG() * 0.026]);
+                const cipres = (xc, yb, alto, ancho, prof, color) => {
+                    L.forma(c => {
+                        c.moveTo(xc - ancho / 2, yb);
+                        c.quadraticCurveTo(xc - ancho * 0.62, yb - alto * 0.45, xc, yb - alto);
+                        c.quadraticCurveTo(xc + ancho * 0.62, yb - alto * 0.45, xc + ancho / 2, yb);
+                        c.closePath();
+                    }, { alb: color, inf: [prof, 0.5, TIPO.veg] });
+                };
+                for (const [x, h] of cip.filter((_, i) => i % 2)) cipres(X(x), Y(cresta(x) - 0.004), S(h), S(0.0062), 0.47, pick(CIPRES, rG));
+                const xc = X(0.672), w = S(0.072), yb = Y(cresta(0.672) - 0.002), yt = Y(cresta(0.672) + 0.017);
+                L.rect(xc - w / 2, yt, w, yb - yt, { alb: '#ebe2d2', emi: foco(yb, yt, 0.45), inf: [0.46, 0.5, TIPO.muro], textura: PAT.cal, texturaAlfa: 0.6 });
+                for (let i = 0; i < 9; i++) ventanaArco(xc - w / 2 + w * (i + 0.7) / 9.4, yb - (yb - yt) * 0.12, S(0.0042), (yb - yt) * 0.5, 0.46, 'rgb(150,95,50)');
+                tejado(xc - w / 2, xc + w / 2, yt, 0.005, 0.46, 0.001);
+                const t = torre({ x: 0.708, w: 0.013, h: 0.032, techo: 0.008, color: '#e8dece', cal: true, prof: 0.46 });
+                ventanaArco(t.xc, t.yt + (t.yb - t.yt) * 0.35, S(0.004), S(0.008), 0.46, 'rgb(150,95,50)');
+                for (const [x, h] of cip.filter((_, i) => !(i % 2))) cipres(X(x), Y(cresta(x) - 0.006), S(h * 0.9), S(0.0058), 0.45, pick(CIPRES, rG));
+            }
+
+            // ------------------------------------------------------------
+            // Vegetación: cada copa es un racimo de hojas (sombra abajo, luz arriba)
+            // ------------------------------------------------------------
+            const PAL_PERENNE = [['#17211a', '#1a2517', '#1d2919'], ['#24311d', '#28361f', '#2c3b22'], ['#36482a', '#3b4e2d', '#415532']];
+            const PAL_CADUCA = paletaCaduca(doy);
+            const racimo = (lista, cx, cy, R, rnd, caduco = false, n = 7) => {
+                const pal = caduco ? PAL_CADUCA : PAL_PERENNE;
+                for (let k = 0; k < n; k++) {
+                    const a = rnd() * Math.PI * 2, d = Math.sqrt(rnd()) * R * 0.75;
+                    const x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d * 0.85;
+                    const alto = (cy - y) / R;
+                    const nivel = alto > 0.18 ? 2 : alto < -0.22 ? 0 : 1;
+                    lista.push({ x, y, r: R * (0.30 + rnd() * 0.28), c: pick(pal[nivel], rnd), n: nivel });
+                }
+            };
+            const plantarCopas = (lista, prof) => {
+                // De atrás hacia delante por franjas; dentro de cada franja, de oscuro a claro
+                const alto = Math.max(4, S(0.012));
+                const franjas = new Map();
+                for (const b of lista) { const k = Math.floor(b.y / alto); if (!franjas.has(k)) franjas.set(k, []); franjas.get(k).push(b); }
+                for (const k of [...franjas.keys()].sort((p, q) => p - q)) L.copas(franjas.get(k).sort((p, q) => p.n - q.n), prof);
+            };
+
+            // ------------------------------------------------------------
+            // 4. Bosque de la Alhambra (cubre la base de las murallas)
+            // ------------------------------------------------------------
+            {
+                const rB = mulberry32(711);
+                const lista = [];
+                for (let x = -0.06; x < 1.07; x += 0.0045 + rB() * 0.004) {
+                    const conMuralla = x > 0.06 && x < 0.57;
+                    const techo = cresta(x) + (conMuralla ? -0.009 : x >= 0.57 && x < 0.78 ? -0.005 : 0.003);
+                    for (let y = techo; y > 0.07; y -= 0.005 + rB() * 0.004) {
+                        const R = S(0.0042 + rB() * 0.004);
+                        racimo(lista, X(x) + (rB() - 0.5) * S(0.004), Y(y) + R * 0.5, R, rB, rB() < 0.10);
+                    }
+                }
+                plantarCopas(lista, 0.42);
+            }
+
+            // ------------------------------------------------------------
+            // 5. La ciudad al pie de la colina (Realejo y Centro) con la Catedral
+            // ------------------------------------------------------------
+            {
+                const rC = mulberry32(1526);
+                const PROF_C = 0.56;
+                const luces = ['rgb(255,176,102)', 'rgb(255,198,138)', 'rgb(255,226,186)', 'rgb(220,232,255)', 'rgb(255,160,80)'];
+                let x = 0.735;
+                while (x < 1.07) {
+                    const w = 0.005 + rC() * 0.011, h = 0.006 + rC() * 0.016;
+                    const base = 0.086 + rC() * 0.01;
+                    const x0 = pix(X(x)), x1 = pix(X(x + w * 1.6 * Hs / Wv));
+                    const yb = pix(Y(base)), yt = pix(Y(base + h));
+                    L.rect(x0, yt, x1 - x0, yb - yt, { alb: pick(['#d9cbb4', '#cdb79a', '#e2d6c2', '#bfa98d', '#d6c3a5'], rC), inf: [PROF_C, 0.5, TIPO.muro] });
+                    L.rect(x0, yt - Math.max(1, pix(u * 1.2)), x1 - x0, Math.max(1, pix(u * 1.2)), { alb: pick(TEJA, rC), inf: [PROF_C, 0.5, TIPO.tejado] });
+                    const vw = Math.max(1, pix(u * 1.3)), vh = Math.max(1, pix(u * 1.8));
+                    for (let vy = yt + vh * 1.6; vy < yb - vh; vy += vh * 2.6)
+                        for (let vx = x0 + vw; vx < x1 - vw; vx += vw * 2.8)
+                            if (rC() < 0.55) L.rect(vx, vy, vw, vh, { alb: '#2b2622', emi: pick(luces, rC), inf: [PROF_C, 0.5, 0.5 + 0.5 * (0.02 + rC() * 0.98)] });
+                    x += w * 1.6 * Hs / Wv * (0.75 + rC() * 0.3);
+                }
+                // Farolas de las calles: puntos de sodio
+                for (let k = 0; k < 70; k++) {
+                    const lx = pix(X(0.74 + rC() * 0.33)), ly = pix(Y(0.084 + rC() * 0.012)), r = Math.max(1, pix(u * 1.1));
+                    L.rect(lx, ly, r, r, { alb: '#3a3128', emi: 'rgb(255,190,110)', inf: [PROF_C, 0.5, TIPO.muro] });
+                }
+                // Catedral de Granada
+                const cx = X(0.872), cw = S(0.05), cb = Y(0.090), ct = Y(0.118);
+                L.rect(cx - cw / 2, ct, cw, cb - ct, { alb: '#d8c7a6', emi: foco(cb, ct, 0.85), inf: [0.54, 0.5, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.35 });
+                L.forma(c => { c.ellipse(cx + cw * 0.12, ct, S(0.011), S(0.010), 0, Math.PI, 0); c.closePath(); },
+                    { alb: '#7a8a86', emi: foco(ct, ct - S(0.01), 0.35), inf: [0.54, 0.5, TIPO.tejado] });
+                const tx = cx - cw * 0.36, tw = S(0.011);
+                L.rect(tx - tw / 2, Y(0.140), tw, Y(0.118) - Y(0.140) + 1, { alb: '#d6c4a2', emi: foco(Y(0.118), Y(0.14), 0.9), inf: [0.54, 0.5, TIPO.muro] });
+                L.rect(tx - tw * 0.35, Y(0.147), tw * 0.7, Y(0.140) - Y(0.147) + 1, { alb: '#d6c4a2', emi: foco(Y(0.14), Y(0.147), 0.8), inf: [0.54, 0.5, TIPO.muro] });
+                for (let i = 0; i < 3; i++) ventanaArco(tx, Y(0.128 + i * 0.006), S(0.0028), S(0.004), 0.54, 'rgb(255,190,120)');
+            }
+
+            // ------------------------------------------------------------
+            // 6. Valle del Darro: olmos, almeces y álamos
+            // ------------------------------------------------------------
+            {
+                const rV = mulberry32(1238);
+                const lista = [];
+                for (let x = -0.06; x < 1.07; x += 0.004 + rV() * 0.005) {
+                    const top = 0.097 + 0.009 * Math.sin(x * 9.0 + 1.3) + rV() * 0.01;
+                    for (let y = top; y > 0.062; y -= 0.0055 + rV() * 0.004) {
+                        const R = S(0.0045 + rV() * 0.0045);
+                        racimo(lista, X(x), Y(y) + R * 0.4, R, rV, rV() < 0.2);
+                    }
+                }
+                plantarCopas(lista, 0.30);
+                const alamos = [];
+                for (let k = 0; k < 30; k++) {
+                    const x = rV() * 1.1 - 0.05, yb = 0.07 + rV() * 0.02, h = 0.028 + rV() * 0.024, w = 0.0035 + rV() * 0.002;
+                    for (let j = 0; j < 9; j++) {
+                        const t = j / 8, R = S(w) * (1 - 0.6 * Math.abs(t - 0.4));
+                        racimo(alamos, X(x) + (rV() - 0.5) * S(0.002), Y(yb + h * t), R, rV, true, 3);
+                    }
+                }
+                plantarCopas(alamos, 0.30);
+            }
+
+            // ------------------------------------------------------------
+            // 7. El Albaicín: casas encaladas, tejas, ventanas, buganvillas y faroles
+            // ------------------------------------------------------------
+            const rH = mulberry32(1013);
+            const LUZ_VENTANA = ['rgb(255,178,104)', 'rgb(255,196,132)', 'rgb(255,164,86)', 'rgb(255,214,168)', 'rgb(255,232,200)'];
+            const BUGANVILLA = ['#9c2358', '#b0306a', '#8a1f4e', '#c04780'];
+            const floreceBuganvilla = doy > 100 && doy < 330;
+
+            const ventana = (x, y, w, h, prof) => {
+                x = pix(x); y = pix(y); w = Math.max(2, pix(w)); h = Math.max(2, pix(h));
+                const id = 0.02 + rH() * 0.98;
+                if (rH() < 0.3) {   // contraventanas
+                    const pc = pick(['#4f6a4b', '#5a4636', '#3e5a55', '#6b5a3c'], rH);
+                    const pw = Math.max(1, Math.ceil(w * 0.42));
+                    L.rect(x - pw, y, pw, h, { alb: pc, inf: [prof, 0.5, TIPO.muro] });
+                    L.rect(x + w, y, pw, h, { alb: pc, inf: [prof, 0.5, TIPO.muro] });
+                }
+                L.rect(x, y, w, h, { alb: '#241e1a', emi: pick(LUZ_VENTANA, rH), inf: [prof, 0.5, 0.5 + 0.5 * id] });
+                L.rect(x, y, w, 1, { alb: '#1a1512', inf: [prof, 0.5, TIPO.muro] });   // dintel en sombra
+                if (rH() < 0.3 && w >= 4) L.rect(x + Math.floor(w / 2), y, 1, h, { alb: '#1d1916', emi: '#000', inf: [prof, 0.5, TIPO.muro] });
+            };
+
+            const farol = (x, y, prof) => {
+                const s = Math.max(2, pix(u * 2.4));
+                L.rect(pix(x) - 1, pix(y) - s, s + 2, 1, { alb: '#26211c', inf: [prof, 0.5, TIPO.muro] });
+                L.rect(pix(x), pix(y) - s + 1, s, s, { alb: '#4a4034', emi: 'rgb(255,214,150)', inf: [prof, 0.5, TIPO.muro] });
+            };
+
+            const sombraFachada = (xa, yt, w, h) => {   // oclusión bajo el alero y junto al suelo
+                const c = L.cA, g = c.createLinearGradient(0, yt, 0, yt + h);
+                g.addColorStop(0, 'rgba(48,34,24,0.45)');
+                g.addColorStop(clamp(S(0.004) / h, 0.05, 0.3), 'rgba(48,34,24,0)');
+                g.addColorStop(0.68, 'rgba(40,30,22,0)');
+                g.addColorStop(1, 'rgba(40,30,22,0.30)');
+                c.fillStyle = g; c.fillRect(xa, yt, w, h);
+            };
+
+            const cipres = (x, base, alto, ancho, prof) => {
+                const xc = X(x), yb = Y(base), h = S(alto), w = S(ancho);
+                const trazo = c => {
+                    c.moveTo(xc - w / 2, yb);
+                    c.quadraticCurveTo(xc - w * 0.66, yb - h * 0.42, xc, yb - h);
+                    c.quadraticCurveTo(xc + w * 0.66, yb - h * 0.42, xc + w / 2, yb);
+                    c.closePath();
+                };
+                L.forma(trazo, { alb: pick(CIPRES, rH), inf: [prof, 0.5, TIPO.veg] });
+                // Luz suave en el lado del cielo
+                const c = L.cA;
+                c.save(); c.beginPath(); trazo(c); c.clip();
+                const g = c.createLinearGradient(xc - w / 2, 0, xc + w / 2, 0);
+                g.addColorStop(0, 'rgba(90,120,80,0.10)'); g.addColorStop(0.5, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.25)');
+                c.fillStyle = g; c.fillRect(xc - w, yb - h, w * 2, h);
+                c.restore();
+            };
+
+            const casa = (x0, base, w, h, prof, o = {}) => {
+                const xa = pix(X(x0)), xb = pix(X(x0) + S(w)), yb = pix(Y(base)), yt = pix(Y(base + h));
+                const ww = xb - xa, hh = yb - yt;
+                if (ww < 3 || hh < 3) return;
+                const col = pick(CAL, rH);
+                const lado = rH() < 0.5 ? (rH() < 0.5 ? -1 : 1) : 0;
+                if (lado) {
+                    const sw = ww * (0.12 + rH() * 0.12);
+                    const pts = lado < 0 ? [[xa, yb], [xa, yt], [xa - sw, yt + sw * 0.25], [xa - sw, yb]] : [[xb, yb], [xb, yt], [xb + sw, yt + sw * 0.25], [xb + sw, yb]];
+                    L.poly(pts, { alb: tono(col, 0.96), inf: [prof, lado < 0 ? 0.15 : 0.85, TIPO.muro], textura: PAT.cal, texturaAlfa: 0.8 });
+                }
+                L.rect(xa, yt, ww, hh, { alb: col, inf: [prof, 0.5, TIPO.muro], textura: PAT.cal, texturaAlfa: 0.8 });
+                sombraFachada(xa, yt, ww, hh);
+                if (rH() < 0.6) {   // de noche, la luz de las farolas sube por la cal
+                    const k = 0.35 + rH() * 0.65, g = L.cE.createLinearGradient(0, yb, 0, yb - hh * 0.85);
+                    g.addColorStop(0, `rgb(${Math.round(150 * k)},${Math.round(98 * k)},${Math.round(52 * k)})`);
+                    g.addColorStop(1, 'rgb(0,0,0)');
+                    L.cE.fillStyle = g; L.cE.fillRect(xa, yt, ww, hh);
+                }
+                if (rH() < 0.35) L.rect(xa, yb - pix(S(0.0035)), ww, pix(S(0.0035)), { alb: pick(['#b9a27c', '#a48f70', '#c7b28c', '#8f8270'], rH), inf: [prof, 0.5, TIPO.muro] });
+
+                // Tejado de teja árabe o azotea
+                const tipoTecho = rH();
+                if (tipoTecho < 0.8) {
+                    const t = Math.max(3, S(0.005 + rH() * 0.006)), v = Math.max(1, S(0.0016));
+                    const pts = tipoTecho < 0.5
+                        ? [[xa - v, yt], [xb + v, yt], [xb - t * 0.25, yt - t], [xa + t * 0.25, yt - t]]
+                        : [[xa - v, yt], [xb + v, yt], [(xa + xb) / 2 + (rH() - 0.5) * ww * 0.3, yt - t * 1.25]];
+                    L.poly(pts, { alb: pick(TEJA, rH), inf: [prof, 0.5, TIPO.tejado], textura: PAT.teja, texturaAlfa: 0.6 });
+                    L.rect(xa - v, yt - 1, ww + 2 * v, Math.max(1, pix(u * 1.1)), { alb: '#6e3a24', inf: [prof, 0.5, TIPO.muro] });
+                    if (rH() < 0.4) {
+                        const cx = pix(mix(xa, xb, 0.2 + rH() * 0.6)), cw = Math.max(2, pix(S(0.0038))), ch = pix(S(0.006 + rH() * 0.004));
+                        L.rect(cx, yt - ch, cw, ch, { alb: col, inf: [prof, 0.5, TIPO.muro] });
+                        L.rect(cx - 1, yt - ch - Math.max(1, pix(S(0.0014))), cw + 2, Math.max(1, pix(S(0.0014))), { alb: pick(TEJA, rH), inf: [prof, 0.5, TIPO.tejado] });
+                    }
+                } else {
+                    const pa = Math.max(2, pix(S(0.0028)));
+                    L.rect(xa, yt - pa, ww, pa, { alb: col, inf: [prof, 0.5, TIPO.muro] });
+                    L.rect(xa, yt - pa, ww, 1, { alb: tono(col, 1.03), inf: [prof, 0.5, TIPO.tejado] });
+                    if (rH() < 0.5) {
+                        const lista = [];
+                        for (let k = 0; k < 4; k++) lista.push({ x: mix(xa, xb, 0.12 + rH() * 0.76), y: yt - pa - S(0.0015), r: S(0.0018 + rH() * 0.0016), c: pick(PAL_PERENNE[1 + (k % 2)], rH), n: 1 });
+                        L.copas(lista, prof);
+                    }
+                }
+
+                // Ventanas
+                const pisos = Math.max(1, Math.floor(h / 0.017));
+                const huecos = Math.max(1, Math.floor(w / 0.011));
+                for (let p = 0; p < pisos; p++) for (let i = 0; i < huecos; i++) {
+                    if (rH() < 0.4) continue;
+                    const vx = mix(xa, xb, (i + 0.5) / huecos) - S(0.002);
+                    const vy = mix(yt, yb, (p + 0.28) / pisos);
+                    ventana(vx, vy, S(0.0040), S(0.0062), prof);
+                }
+                // Puerta con arco
+                if (o.puerta && rH() < 0.55) {
+                    const dw = S(0.0052), dh = Math.min(hh * 0.42, S(0.0105)), dx = mix(xa + dw, xb - dw, rH());
+                    L.forma(c => { c.rect(dx - dw / 2, yb - dh + dw / 2, dw, dh - dw / 2); c.moveTo(dx + dw / 2, yb - dh + dw / 2); c.arc(dx, yb - dh + dw / 2, dw / 2, 0, Math.PI, true); },
+                        { alb: pick(['#3b2b20', '#4a3423', '#2f3a2d'], rH), inf: [prof, 0.5, TIPO.muro] });
+                }
+                // Buganvilla
+                if (floreceBuganvilla && rH() < 0.13) {
+                    const lista = [], bx = rH() < 0.5 ? xa + ww * 0.12 : xb - ww * 0.12;
+                    for (let k = 0; k < 16; k++) lista.push({ x: bx + (rH() - 0.5) * ww * 0.35, y: yt + rH() * hh * 0.6, r: S(0.0014 + rH() * 0.0016), c: k < 5 ? '#2b3a20' : pick(BUGANVILLA, rH), n: k < 5 ? 0 : 1 });
+                    L.copas(lista, prof);
+                }
+                if (rH() < 0.2) farol(mix(xa, xb, rH() < 0.5 ? 0.06 : 0.9), mix(yt, yb, 0.45), prof);
+            };
+
+            // Masa urbana de fondo: las callejuelas en sombra entre casas
+            {
+                const pts = [];
+                for (let x = -0.08; x <= 1.08; x += 0.008) pts.push([X(x), Y(0.074 + 0.006 * Math.sin(x * 11) + 0.004 * Math.sin(x * 37))]);
+                pts.push([X(1.08), Y(-0.02)], [X(-0.08), Y(-0.02)]);
+                L.poly(pts, { alb: '#6a5e50', inf: [0.2, 0.5, TIPO.muro] });
+            }
+
+            // Filas de casas, de atrás hacia delante (más grandes cuanto más cerca)
+            const filas = [
+                { base: 0.071, dB: 0.006, h: [0.009, 0.016], w: [0.010, 0.019], prof: 0.27 },
+                { base: 0.055, dB: 0.006, h: [0.012, 0.020], w: [0.012, 0.024], prof: 0.22 },
+                { base: 0.038, dB: 0.007, h: [0.015, 0.026], w: [0.016, 0.032], prof: 0.17 },
+                { base: 0.018, dB: 0.008, h: [0.019, 0.032], w: [0.021, 0.042], prof: 0.12, puerta: true },
+                { base: -0.008, dB: 0.006, h: [0.025, 0.042], w: [0.028, 0.056], prof: 0.08, puerta: true },
+            ];
+            for (const f of filas) {
+                let x = -0.07;
+                while (x < 1.07) {
+                    const w = mix(f.w[0], f.w[1], rH());
+                    let h = mix(f.h[0], f.h[1], rH());
+                    if (x > 0.30 && x < 0.68 && f.prof < 0.15) h *= 0.72;   // más bajas en el centro: se ve la Alhambra
+                    const base = f.base + (rH() - 0.5) * f.dB + 0.004 * Math.sin(x * 13 + f.base * 50);
+                    const r = rH();
+                    if (r < 0.07) cipres(x + w * 0.5, base - 0.002, h * 2.0 + 0.01, Math.max(0.005, w * 0.25), f.prof);
+                    else if (r < 0.13) { const lista = []; racimo(lista, X(x + w * 0.5), Y(base + h * 0.6), S(h * 0.55), rH, rH() < 0.3, 9); plantarCopas(lista, f.prof); }
+                    else casa(x, base, w, h, f.prof, f);
+                    x += w * Hs / Wv * (0.62 + rH() * 0.3);
+                }
+            }
+
+            // Campanario a la izquierda (ladrillo y cuerpo de campanas)
+            {
+                const xc = X(0.040), w = S(0.032), yb = Y(-0.01), yt = Y(0.112), prof = 0.08;
+                L.rect(xc - w / 2, yt, w, yb - yt, { alb: '#a9654b', emi: foco(yb, yt, 0.55), inf: [prof, 0.5, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.7 });
+                L.poly([[xc + w / 2, yt], [xc + w / 2 + S(0.007), yt + S(0.002)], [xc + w / 2 + S(0.007), yb], [xc + w / 2, yb]],
+                    { alb: '#9f5d45', inf: [prof, 0.86, TIPO.muro], textura: PAT.piedra, texturaAlfa: 0.7 });
+                for (let k = 0; k < 6; k++) L.rect(xc - w / 2, Y(0.02 + k * 0.016), w + S(0.007), Math.max(1, pix(u * 1.2)), { alb: '#8a4e3a', inf: [prof, 0.5, TIPO.muro] });
+                L.rect(xc - w / 2 - S(0.0015), yt + S(0.0045), w + S(0.003), Math.max(1, pix(S(0.0018))), { alb: '#b87459', inf: [prof, 0.5, TIPO.muro] });
+                for (const k of [-0.3, 0, 0.3]) {
+                    const ax = xc + w * k, aw = w * 0.17, atop = yt + S(0.0075), ah = S(0.016);
+                    L.forma(c => { c.rect(ax - aw / 2, atop + aw / 2, aw, ah - aw / 2); c.moveTo(ax + aw / 2, atop + aw / 2); c.arc(ax, atop + aw / 2, aw / 2, 0, Math.PI, true); },
+                        { alb: '#21170f', emi: 'rgb(70,42,22)', inf: [prof, 0.5, TIPO.muro] });
+                    if (k !== 0) L.rect(ax - aw * 0.22, atop + ah * 0.42, aw * 0.44, ah * 0.32, { alb: '#5d4a2b', inf: [prof, 0.5, TIPO.muro] });
+                }
+                L.poly([[xc - w / 2 - S(0.002), yt], [xc + w / 2 + S(0.002), yt], [xc, yt - S(0.016)]], { alb: '#a35835', inf: [prof, 0.5, TIPO.tejado], textura: PAT.teja, texturaAlfa: 0.5 });
+                L.rect(xc - 1, yt - S(0.026), Math.max(2, pix(u * 1.6)), S(0.011), { alb: '#2a2420', inf: [prof, 0.5, TIPO.muro] });
+                L.rect(xc - S(0.003), yt - S(0.022), S(0.006) + 2, Math.max(2, pix(u * 1.6)), { alb: '#2a2420', inf: [prof, 0.5, TIPO.muro] });
+            }
+            // Cipreses que enmarcan la izquierda
+            cipres(0.078, -0.01, 0.15, 0.016, 0.06);
+            cipres(0.094, -0.01, 0.118, 0.013, 0.07);
+
+            // Palmera y ciprés a la derecha
+            {
+                cipres(0.925, -0.01, 0.13, 0.014, 0.06);
+                const tx = X(0.958), tb = Y(-0.01), th = S(0.15), prof = 0.06;
+                const cima = [tx + S(0.012), tb - th];
+                L.forma(c => {
+                    c.moveTo(tx - S(0.0028), tb);
+                    c.quadraticCurveTo(tx + S(0.004), tb - th * 0.5, cima[0] - S(0.0016), cima[1]);
+                    c.lineTo(cima[0] + S(0.0016), cima[1]);
+                    c.quadraticCurveTo(tx + S(0.008), tb - th * 0.5, tx + S(0.0028), tb);
+                    c.closePath();
+                }, { alb: '#5d4a37', inf: [prof, 0.5, TIPO.muro] });
+                for (let k = 0; k < 13; k++) {
+                    const a = -Math.PI * 0.95 + k / 12 * Math.PI * 1.1 + (rH() - 0.5) * 0.2;
+                    const len = S(0.036 + rH() * 0.014);
+                    const ex = cima[0] + Math.cos(a) * len, ey = cima[1] + Math.sin(a) * len * 0.75 + len * 0.35;
+                    const mx = cima[0] + Math.cos(a) * len * 0.5, my = cima[1] + Math.sin(a) * len * 0.5 - len * 0.12;
+                    L.forma(c => {
+                        c.moveTo(cima[0], cima[1]);
+                        c.quadraticCurveTo(mx, my - S(0.003), ex, ey);
+                        c.quadraticCurveTo(mx, my + S(0.003), cima[0], cima[1] + S(0.002));
+                        c.closePath();
+                    }, { alb: pick(['#2f4a26', '#365429', '#2a4122'], rH), inf: [prof, 0.5, TIPO.veg] });
+                }
+            }
+
+            // Altura del paisaje en cada columna (para saber cuándo el sol se oculta)
+            const datos = L.cA.getImageData(0, 0, W, H).data;
+            const cimaColumna = new Float32Array(W);
+            for (let x = 0; x < W; x++) {
+                let fila = H;
+                for (let y = 0; y < H; y++) if (datos[(y * W + x) * 4 + 3] > 128) { fila = y; break; }
+                cimaColumna[x] = band * (1 - fila / H);
+            }
+            return { lienzo: L, cimaColumna, panAspect: Wv / Hs, pan: [W / Wv, off / Wv] };
+        }
+
+        // ================================================================
+        //  WEBGL
+        // ================================================================
+        const canvas = document.getElementById('cielo');
+        const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, premultipliedAlpha: false, powerPreference: 'high-performance' });
+
+        let prog = null, U = {}, texturas = {}, paisaje = null;
+
+        function compilar(tipo, fuente) {
+            const s = gl.createShader(tipo);
+            gl.shaderSource(s, fuente.trim());
+            gl.compileShader(s);
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+            return s;
+        }
+
+        function iniciarGL() {
+            prog = gl.createProgram();
+            gl.attachShader(prog, compilar(gl.VERTEX_SHADER, document.getElementById('vs').textContent));
+            gl.attachShader(prog, compilar(gl.FRAGMENT_SHADER, document.getElementById('fs').textContent));
+            gl.linkProgram(prog);
+            if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+            gl.useProgram(prog);
+
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+            const loc = gl.getAttribLocation(prog, 'aPos');
+            gl.enableVertexAttribArray(loc);
+            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+            const n = gl.getProgramParameter(prog, gl.ACTIVE_UNIFORMS);
+            for (let i = 0; i < n; i++) {
+                const info = gl.getActiveUniform(prog, i);
+                U[info.name] = gl.getUniformLocation(prog, info.name);
+            }
+            ['uAlb', 'uEmi', 'uInf'].forEach((nombre, i) => {
+                texturas[nombre] = gl.createTexture();
+                gl.uniform1i(U[nombre], i);
+            });
+        }
+
+        function subirTextura(nombre, unidad, fuente, { mip = false, nearest = false, premult = false } = {}) {
+            gl.activeTexture(gl.TEXTURE0 + unidad);
+            gl.bindTexture(gl.TEXTURE_2D, texturas[nombre]);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premult);
+            gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, fuente);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, nearest ? gl.NEAREST : gl.LINEAR);
+            if (mip) {
+                gl.generateMipmap(gl.TEXTURE_2D);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            } else {
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, nearest ? gl.NEAREST : gl.LINEAR);
+            }
+        }
+
+        // ================================================================
+        //  ESTADO DEL TIEMPO SIMULADO
+        // ================================================================
+        const params = new URLSearchParams(location.search);
+        let simMs = Date.now();
+        let velocidad = 1;
+        let enDirecto = true;
+        let arrastrando = false;
+        {
+            const fecha = params.get('fecha');           // ?fecha=2026-12-24
+            const hora = params.get('hora');             // ?hora=20.5  (hora de Granada)
+            if (fecha || hora !== null) {
+                const hoy = horaLocal(Date.now());
+                const [y, m, d] = fecha ? fecha.split('-').map(Number) : [hoy.y, hoy.mes + 1, hoy.dia];
+                simMs = msDesdeLocal(y, m - 1, d, hora !== null ? parseFloat(hora) : hoy.horas);
+                enDirecto = false;
+                velocidad = 0;
+            }
+            if (params.get('vel')) { velocidad = parseFloat(params.get('vel')); enDirecto = false; }
+        }
+
+        function factorVentanas(h) {
+            const pts = [[0, 0.32], [1.5, 0.16], [3.5, 0.07], [5.5, 0.10], [6.5, 0.32], [8, 0.4], [18, 0.55], [20, 0.82], [22.5, 0.78], [24, 0.32]];
+            for (let i = 0; i < pts.length - 1; i++) if (h <= pts[i + 1][0]) return mix(pts[i][1], pts[i + 1][1], (h - pts[i][0]) / (pts[i + 1][0] - pts[i][0]));
+            return 0.32;
+        }
+
+        function ruidoTiempo(t) { const i = Math.floor(t), f = t - i, s = f * f * (3 - 2 * f); return mix(hash12(i, 9.1), hash12(i + 1, 9.1), s); }
+
+        function nombreFaseLunar(frac, creciente) {
+            if (frac < 0.03) return 'Luna nueva';
+            if (frac > 0.97) return 'Luna llena';
+            if (Math.abs(frac - 0.5) < 0.06) return creciente ? 'Cuarto creciente' : 'Cuarto menguante';
+            if (frac < 0.5) return creciente ? 'Luna creciente' : 'Luna menguante';
+            return creciente ? 'Gibosa creciente' : 'Gibosa menguante';
+        }
+
+        function faseDia(sol) {
+            const e = sol.e, manana = sol.H < 0;
+            if (e < -12) return ['noche', 'Noche'];
+            if (e < -6) return ['hora-azul', manana ? 'Alba' : 'Anochecer'];
+            if (e < 0) return manana ? ['alba', 'Alba'] : ['ocaso', 'Ocaso'];
+            if (e < 7) return manana ? ['amanecer', 'Amanecer'] : ['hora-dorada', 'Hora dorada'];
+            if (sol.e > sol.eMax - 5) return ['dia', 'Mediodía'];
+            return ['dia', manana ? 'Mañana' : 'Tarde'];
+        }
+
+        function calcularEstado(ms, aspecto) {
+            const n = diasJ2000(ms);
+            const lst = ((280.46061837 + 360.98564736629 * n + CONFIG.longitud) % 360 + 360) % 360;
+            const solEq = solEcuatorial(n), lunaEq = lunaEcuatorial(n);
+            const sol = horizontales(solEq.ra, solEq.dec, lst);
+            const luna = horizontales(lunaEq.ra, lunaEq.dec, lst);
+            const pSol = posicionPantalla(sol), pLuna = posicionPantalla(luna);
+
+            // Fase lunar
+            const vec = (ra, dec) => [Math.cos(dec) * Math.cos(ra), Math.cos(dec) * Math.sin(ra), Math.sin(dec)];
+            const vs = vec(solEq.ra, solEq.dec), vl = vec(lunaEq.ra, lunaEq.dec);
+            const cosPsi = clamp(vs[0] * vl[0] + vs[1] * vl[1] + vs[2] * vl[2], -1, 1);
+            const psi = Math.acos(cosPsi);
+            const frac = (1 - cosPsi) / 2;
+            const creciente = (((lunaEq.lon - solEq.lon) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) < Math.PI;
+
+            // Exposición automática a partir de la luz del cielo
+            const amb = ambienteCielo(sol.e);
+            const lumAmb = lum(amb);
+            const exposicion = clamp(0.69 / Math.pow(lumAmb + 1e-7, 0.58), 0.5, 42);
+            const msK = 0.12 + 0.85 * ss(2, -6, sol.e);
+
+            const T800 = transmitancia(800, sol.e), T35 = transmitancia(3500, sol.e), T7 = transmitancia(7000, sol.e);
+            const noche = ss(-3, -12, sol.e);
+            const luces = ss(0.5, -4, sol.e);
+            const lunaArriba = ss(-1, 15, luna.e);
+            const lunaCielo = frac * ss(-2, 25, luna.e) * ss(-2, -10, sol.e);
+            const ocultaLuna = ss(0.12, 0.35, psi);   // cerca de la luna nueva no se ve
+
+            const loc = horaLocal(ms);
+            const doy = diaDelAno(ms);
+            const invierno = 0.5 + 0.5 * Math.cos(2 * Math.PI * (doy - 15) / 365);
+            const nieve = 0.12 + 0.88 * ss(0.18, 0.75, 0.5 + 0.5 * Math.cos(2 * Math.PI * (doy - 35) / 365));
+            const dias = ms / 864e5;
+            const cobertura = clamp(0.30 + 0.5 * (ruidoTiempo(dias * 0.45) - 0.5) + 0.25 * (ruidoTiempo(dias * 2.3 + 40) - 0.5) + 0.12 * invierno, 0.06, 0.66);
+            const bruma = (sol.H < 0 ? 1 : 0.3) * ss(-4, 1, sol.e) * (1 - ss(5, 20, sol.e)) * (0.55 + 0.45 * invierno) + 0.06;
+
+            return {
+                ms, n, lst, sol, luna, pSol, pLuna, psi, frac, creciente, amb, lumAmb, exposicion, msK,
+                T800, T35, T7, noche, luces, lunaArriba, lunaCielo, ocultaLuna, loc, doy, nieve, cobertura, bruma,
+                ventanas: factorVentanas(loc.horas)
+            };
+        }
+
+        // ================================================================
+        //  RENDER
+        // ================================================================
+        const calidadFija = params.get('calidad') ? parseFloat(params.get('calidad')) : null;   // ?calidad=1 desactiva el ajuste automático
+        const nubesFijas = params.get('nubes') ? clamp(parseFloat(params.get('nubes')), 0, 1) : null;   // ?nubes=0.6 fuerza la nubosidad
+        const escalaBase = Math.min(CONFIG.calidadInicial, 1.25 / Math.min(window.devicePixelRatio || 1, 2));
+        let escala = calidadFija ?? escalaBase;
+        let tamCSS = [0, 0], dprUsado = 1;
+        let estacionPintada = -1;
+        const meteoro = { t: -1, dur: 1, a: [0, 0], d: [0, 0] };
+
+        function redimensionar() {
+            const w = window.innerWidth, h = window.innerHeight;
+            dprUsado = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.max(2, Math.round(w * dprUsado * escala));
+            canvas.height = Math.max(2, Math.round(h * dprUsado * escala));
+            if (!prog) return;
+            if (w !== tamCSS[0] || h !== tamCSS[1] || !paisaje) {
+                tamCSS = [w, h];
+                repintarPaisaje();
+            }
+        }
+
+        function repintarPaisaje() {
+            const doy = diaDelAno(simMs);
+            estacionPintada = Math.floor(doy / 20);
+            paisaje = pintarPaisaje(tamCSS[0], tamCSS[1], dprUsado, doy);
+            if (gl && prog) {
+                subirTextura('uAlb', 0, paisaje.lienzo.alb, { premult: true, mip: true });
+                subirTextura('uEmi', 1, paisaje.lienzo.emi, { mip: true });
+                subirTextura('uInf', 2, paisaje.lienzo.inf, { nearest: true });
+            }
+        }
+
+        function ocultacion(px, py, r) {   // fracción del disco tapada por el paisaje
+            if (!paisaje) return 0;
+            const xv = px * paisaje.pan[0] + paisaje.pan[1];
+            const col = paisaje.cimaColumna[clamp(Math.round(px * (paisaje.cimaColumna.length - 1)), 0, paisaje.cimaColumna.length - 1)] || 0;
+            const tope = Math.max(sierraY(xv, paisaje.panAspect), colinasY(xv, paisaje.panAspect), px >= 0 && px <= 1 ? col : 0);
+            return clamp((tope - (py - r)) / (2 * r), 0, 1);
+        }
+
+        function fijarUniformes(st, tReal) {
+            const asp = canvas.width / canvas.height;
+            const f1 = (n, v) => U[n] && gl.uniform1f(U[n], v);
+            const f2 = (n, a, b) => U[n] && gl.uniform2f(U[n], a, b);
+            const f3 = (n, v) => U[n] && gl.uniform3f(U[n], v[0], v[1], v[2]);
+            const f4 = (n, v) => U[n] && gl.uniform4f(U[n], v[0], v[1], v[2], v[3]);
+
+            const E = st.exposicion;
+            f2('uRes', canvas.width, canvas.height);
+            f1('uAspect', asp);
+            f1('uTime', tReal);
+            f2('uPan', paisaje.pan[0], paisaje.pan[1]);
+            f1('uPanAspect', paisaje.panAspect);
+            f1('uHorizon', CONFIG.horizonte);
+            f1('uDegPerY', GRADOS_POR_Y);
+            f1('uBand', CONFIG.banda);
+
+            // Sol
+            const { pSol, pLuna, sol, luna } = st;
+            const ocS = ocultacion(pSol.x, pSol.y, CONFIG.radioSol);
+            f3('uSunDir', dirPantalla(pSol.x, pSol.ed, asp));
+            f2('uSunPos', pSol.x, pSol.y);
+            f1('uSunRadius', CONFIG.radioSol);
+            f1('uSunFlat', 0.8 + 0.2 * ss(0, 4, sol.e));
+            f3('uSunDisk', v3(st.T800.map(t => Math.pow(t, 0.6)), 12 * ss(-1, 0.5, sol.e)));
+            f3('uGlare', v3(st.T800.map(Math.sqrt), 0.9 * (1 - ocS) * ss(-0.5, 2, sol.e)));
+            f1('uExposure', E);
+            f1('uAtmos', sol.e > -16 ? 1 : 0);
+            f3('uMS', v3([0.30, 0.48, 1.0], st.lumAmb * E * st.msK));
+
+            // Luna
+            const dS = [(pSol.x - pLuna.x) * asp, pSol.y - pLuna.y];
+            const ld = Math.hypot(dS[0], dS[1]) || 1;
+            const sp = Math.sin(st.psi);
+            f2('uMoonPos', pLuna.x, pLuna.y);
+            f1('uMoonRadius', CONFIG.radioLuna);
+            f3('uMoonL', [dS[0] / ld * sp, dS[1] / ld * sp, -Math.cos(st.psi)]);
+            const TL = transmitancia(800, Math.max(luna.e, 0.2));
+            const tmax = Math.max(TL[0], 1e-3);
+            f3('uMoonTint', [1, Math.pow(TL[1] / tmax, 0.6), Math.pow(TL[2] / tmax, 0.6)].map(c => c * Math.pow(tmax, 0.4)));
+            f1('uMoonFrac', st.frac);
+            const visLuna = ss(-1.2, 1.5, pLuna.ed) * st.ocultaLuna;
+            f1('uMoonBright', visLuna * (0.36 + 1.9 * st.noche));
+            f3('uMoonHalo', v3([0.75, 0.80, 0.92], st.frac * 0.35 * st.noche * visLuna * (1 - ocultacion(pLuna.x, pLuna.y, CONFIG.radioLuna))));
+            f1('uMoonSky', st.lunaCielo);
+
+            // Estrellas
+            f1('uStarVis', st.noche * (1 - 0.45 * st.lunaCielo));
+            f1('uMilky', st.noche * st.noche * (1 - 0.85 * st.lunaCielo) * 0.9);
+            f1('uTwinkle', reducirMovimiento ? 0 : 0.35);
+            if (U.uToEq) gl.uniformMatrix3fv(U.uToEq, false, matrizEcuatorial(st.lst));
+
+            // Luz sobre el paisaje
+            const K = 2.3 * E;
+            f3('uSunGround', v3(st.T800, K * ss(-0.6, 0.8, sol.e)));
+            f3('uSunHigh', v3(st.T35, K));
+            f3('uSunCirrus', v3(st.T7, K));
+            const ambNoche = [0.0035, 0.005, 0.011];
+            const luzLuna = v3([0.55, 0.62, 0.78], 0.07 * st.frac * st.lunaArriba * st.noche);
+            f3('uAmb', [0, 1, 2].map(i => st.amb[i] * E + ambNoche[i] + luzLuna[i] * 0.6));
+            const gris = lum(st.amb) * E, rebote = Math.max(Math.sin(sol.e * RAD), 0) * 0.10 * K;
+            f3('uAmbLand', [0, 1, 2].map(i => mix(st.amb[i] * E, gris, 0.4) + st.T800[i] * rebote * [1, 0.86, 0.7][i] + ambNoche[i] + luzLuna[i] * 0.6));
+            f3('uMoonLight', luzLuna);
+            f3('uLightDir', dirLuz(sol));
+            f3('uMoonLightDir', dirLuz(luna));
+            f3('uCityGlow', v3([0.030, 0.019, 0.010], st.luces));
+            f1('uLights', st.luces);
+            f1('uWindows', st.ventanas);
+            f1('uSnow', st.nieve);
+            f1('uMist', st.bruma);
+            f1('uCover', nubesFijas ?? st.cobertura);
+            f1('uBloom', 0.9);
+            const horasSim = st.ms / 3600e3;
+            f2('uWind', (reducirMovimiento ? 0 : tReal * 0.004) + (horasSim % 1000) * 0.035, (reducirMovimiento ? 0 : tReal * 0.0012) + (horasSim % 1000) * 0.01);
+
+            // Estrella fugaz
+            if (meteoro.t >= 0) {
+                f4('uMeteor', [meteoro.a[0] * asp, meteoro.a[1], meteoro.d[0] * asp, meteoro.d[1]]);
+                f1('uMeteorT', meteoro.t);
+            } else f1('uMeteorT', -1);
+        }
+
+        function actualizarMeteoro(dt, st) {
+            if (meteoro.t >= 0) {
+                meteoro.t += dt / meteoro.dur;
+                if (meteoro.t > 1) meteoro.t = -1;
+                return;
+            }
+            if (reducirMovimiento || st.noche < 0.7) return;
+            if (Math.random() < dt / 22) {
+                const izq = Math.random() < 0.5;
+                meteoro.a = [izq ? 0.06 + Math.random() * 0.14 : 0.80 + Math.random() * 0.14, 0.80 + Math.random() * 0.14];
+                meteoro.d = [(izq ? -1 : 1) * (0.05 + Math.random() * 0.06), -(0.07 + Math.random() * 0.08)];
+                meteoro.dur = 0.6 + Math.random() * 0.7;
+                meteoro.t = 0;
+            }
+        }
+
+        // ================================================================
+        //  INTERFAZ Y VARIABLES PARA EL PORTFOLIO
+        // ================================================================
+        const slider = document.getElementById('slider-hora');
+        const textoHora = document.getElementById('texto-hora');
+        const textoFecha = document.getElementById('reloj-fecha');
+        const textoEstado = document.getElementById('reloj-estado');
+        const textoDinamico = document.getElementById('texto-dinamico');
+        const botonesVel = document.querySelectorAll('.btn-vel');
+        const raiz = document.documentElement;
+        const DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+        const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+        let diaPista = '';
+
+        function colorCentro(st, aspecto) {
+            // Color aproximado del cielo detrás del contenido central (para el contraste del texto)
+            const rd = dirPantalla(0.5, (0.55 - CONFIG.horizonte) * GRADOS_POR_Y, aspecto);
+            const sd = dirPantalla(st.pSol.x, st.pSol.ed, aspecto);
+            const c = cieloJS(rd, sd);
+            const ms = v3([0.30, 0.48, 1.0], st.lumAmb * st.exposicion * st.msK);
+            const nocheBase = [0.0040, 0.0060, 0.0140];
+            const lin = [0, 1, 2].map(i => c[i] * st.exposicion + ms[i] + nocheBase[i] + st.lunaCielo * [0.01, 0.016, 0.034][i]);
+            return lin.map(x => Math.pow(acesJS(x), 1 / 2.2));
+        }
+
+        function actualizarPista(st, aspecto) {
+            const clave = `${st.loc.y}-${st.loc.mes}-${st.loc.dia}`;
+            if (clave === diaPista) return;
+            diaPista = clave;
+            const paradas = [];
+            for (let h = 0; h <= 24; h += 1) {
+                const s = calcularEstado(msDesdeLocal(st.loc.y, st.loc.mes, st.loc.dia, h), aspecto);
+                const c = colorCentro(s, aspecto).map(v => Math.round(clamp(v * 1.15, 0, 1) * 255));
+                paradas.push(`rgb(${c.join(',')}) ${(h / 24 * 100).toFixed(1)}%`);
+            }
+            slider.style.setProperty('--pista', `linear-gradient(90deg, ${paradas.join(', ')})`);
+        }
+
+        let ultimoUI = 0;
+        function actualizarUI(st, aspecto, ahora) {
+            if (!arrastrando) slider.value = st.loc.horas.toFixed(3);
+            if (ahora - ultimoUI < 120) return;
+            ultimoUI = ahora;
+
+            const h = Math.floor(st.loc.horas), m = Math.floor((st.loc.horas - h) * 60);
+            textoHora.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            textoFecha.textContent = `${DIAS[st.loc.dow]} ${st.loc.dia} ${MESES[st.loc.mes]}`;
+            const [fase, nombreFase] = faseDia(st.sol);
+            const luna = nombreFaseLunar(st.frac, st.creciente);
+            textoEstado.textContent = `${nombreFase} · ${luna} ${Math.round(st.frac * 100)} %`;
+            if (textoDinamico) textoDinamico.textContent = enDirecto ? `Granada · ${nombreFase.toLowerCase()}` : `Granada · ${textoHora.textContent}`;
+            actualizarPista(st, aspecto);
+
+            // Contraste del texto según el cielo
+            const c = colorCentro(st, aspecto);
+            const L = lum(c);
+            const t = ss(0.50, 0.62, L);
+            const oscuro = [11, 21, 48], claro = [247, 248, 251];
+            const tx = oscuro.map((o, i) => Math.round(mix(claro[i], o, t)));
+            raiz.style.setProperty('--color-texto', `rgb(${tx.join(',')})`);
+            raiz.style.setProperty('--color-texto-suave', `rgba(${tx.join(',')},${(0.72 + 0.08 * t).toFixed(2)})`);
+            raiz.style.setProperty('--sombra-texto', t > 0.5 ? '0 1px 24px rgba(255,255,255,0.25)' : '0 1px 24px rgba(3,6,20,0.45)');
+            const acento = st.noche > 0.6 ? '#dfe6f5' : fase === 'hora-dorada' || fase === 'ocaso' || fase === 'amanecer' ? '#ffd29a' : t > 0.5 ? '#9a5a1e' : '#f3c77b';
+            raiz.style.setProperty('--acento', acento);
+            raiz.dataset.fase = fase;
+            window.dispatchEvent(new CustomEvent('cielo:cambio', { detail: { fase, nombreFase, luna, iluminacion: st.frac, elevacionSol: st.sol.e, colorCielo: c } }));
+        }
+
+        const panel = document.querySelector('.reloj');
+        const resumen = document.getElementById('reloj-resumen');
+        resumen.addEventListener('click', () => {
+            if (!window.matchMedia('(max-width: 640px)').matches) return;
+            const abierto = panel.classList.toggle('abierto');
+            resumen.setAttribute('aria-expanded', String(abierto));
+        });
+
+        function marcarBoton(clave) {
+            botonesVel.forEach(b => b.classList.toggle('activo', b.dataset.vel === clave));
+        }
+
+        slider.addEventListener('input', e => {
+            arrastrando = true;
+            enDirecto = false;
+            const l = horaLocal(simMs);
+            simMs = msDesdeLocal(l.y, l.mes, l.dia, parseFloat(e.target.value));
+        });
+        slider.addEventListener('change', () => { arrastrando = false; });
+
+        botonesVel.forEach(btn => btn.addEventListener('click', () => {
+            if (btn.dataset.vel === 'ahora') {
+                simMs = Date.now(); velocidad = 1; enDirecto = true;
+            } else {
+                velocidad = parseFloat(btn.dataset.vel); enDirecto = false;
+            }
+            marcarBoton(btn.dataset.vel);
+        }));
+        if (!enDirecto) marcarBoton(String(velocidad));
+
+        // ================================================================
+        //  BUCLE PRINCIPAL
+        // ================================================================
+        let tPrev = performance.now(), tAcum = 0, muestras = [], ultimoDibujo = 0;
+        const t0 = performance.now();
+
+        function bucle(ahora) {
+            const dt = Math.min((ahora - tPrev) / 1000, 0.1);
+            tPrev = ahora;
+            if (enDirecto) simMs = Date.now();
+            else if (!arrastrando) simMs += dt * 1000 * velocidad;
+
+            // 30 fps en tiempo real (de sobra para un fondo), fluido si se acelera
+            const intervalo = (enDirecto || velocidad <= 1) && !arrastrando ? 1000 / 30 : 0;
+            if (ahora - ultimoDibujo < intervalo - 2) { requestAnimationFrame(bucle); return; }
+            const dtDibujo = (ahora - ultimoDibujo) / 1000;
+            ultimoDibujo = ahora;
+
+            const aspecto = window.innerWidth / window.innerHeight;
+            const st = calcularEstado(simMs, aspecto);
+
+            if (gl && prog) {
+                if (Math.floor(st.doy / 20) !== estacionPintada) repintarPaisaje();
+                actualizarMeteoro(Math.min(dtDibujo, 0.1), st);
+                fijarUniformes(st, (ahora - t0) / 1000);
+                gl.viewport(0, 0, canvas.width, canvas.height);
+                gl.drawArrays(gl.TRIANGLES, 0, 3);
+                adaptarCalidad(dtDibujo, intervalo);
+            } else {
+                const c = cieloEnHora(st.loc.horas);
+                ['c1', 'c2', 'c3', 'c4', 'c5'].forEach((k, i) => raiz.style.setProperty(`--color-${i + 1}`, c[k]));
+            }
+            actualizarUI(st, aspecto, ahora);
             requestAnimationFrame(bucle);
         }
 
+        // Baja la resolución si el equipo no llega (y la recupera poco a poco)
+        function adaptarCalidad(dt, intervalo) {
+            if (calidadFija) return;
+            muestras.push(dt);
+            if (muestras.length < 45) return;
+            const media = muestras.reduce((a, b) => a + b, 0) / muestras.length;
+            muestras = [];
+            const objetivo = Math.max(intervalo / 1000, 1 / 60);
+            if (media > objetivo * 1.45 && escala > 0.45) { escala = Math.max(0.45, escala * 0.82); redimensionar(); }
+            else if (media < objetivo * 1.08 && escala < escalaBase) { escala = Math.min(escalaBase, escala * 1.08); redimensionar(); }
+        }
+
+        // ================================================================
+        //  ARRANQUE
+        // ================================================================
+        canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); prog = null; });
+        canvas.addEventListener('webglcontextrestored', () => {
+            try { U = {}; texturas = {}; iniciarGL(); paisaje = null; redimensionar(); } catch (err) { document.body.classList.add('sin-webgl'); }
+        });
+
+        let temporizador = null;
+        window.addEventListener('resize', () => { clearTimeout(temporizador); temporizador = setTimeout(redimensionar, 150); });
+
+        try {
+            if (!gl) throw new Error('Sin WebGL2');
+            iniciarGL();
+        } catch (err) {
+            console.warn('Cielo: usando el degradado de respaldo.', err);
+            document.body.classList.add('sin-webgl');
+            prog = null;
+        }
+        redimensionar();
         requestAnimationFrame(bucle);
     </script>
 </body>

@@ -57,7 +57,6 @@ public class prestamos {
                     System.err.println("Ha ocurrido un error durante la operacion. Cancelando...");
                 }
             }
-
             else if (opcionMenu.equals("2")) {
                 mostrarTodos(originales);
             }
@@ -67,7 +66,6 @@ public class prestamos {
                     System.out.println(obtenerCampos[0] + " -> " + obtenerCampos[1] + " (" + obtenerCampos[2] + ")");
                 }
             }
-
             else if (opcionMenu.equals("4")) {
                 actualizacion = new ArrayList<>();
                 obtenerCampos = busquedaPorId(scanner, originales);
@@ -93,7 +91,6 @@ public class prestamos {
                     }
                 }
             }
-
             else if (opcionMenu.equals("5")) {
                 obtenerCampos = busquedaPorId(scanner, originales);
                 actualizacion = new ArrayList<>();
@@ -118,14 +115,13 @@ public class prestamos {
                 }
 
             }
-
             else if (opcionMenu.equals("6")) {
                 crearBackup(ruta, rutaRespaldo);
             } 
-
             else if (opcionMenu.equals("7")) {
                 restaurarBackup(rutaRespaldo, scanner, ruta);
-            }else if(opcionMenu.equals("0")){
+            }
+            else if(opcionMenu.equals("0")){
                 ejecutar = false;
             }
 
@@ -143,12 +139,10 @@ public class prestamos {
         }
         return resultado;
     }
-
     private static String pedirString(String mensaje, Scanner lector) {
         System.out.print(mensaje);
         return lector.nextLine();
     }
-
     private static void restaurarBackup(Path rutaRespaldoArchivoPrincipal, Scanner lector, Path rutaArchivoPrincipal) {
         try {
 
@@ -181,7 +175,6 @@ public class prestamos {
             System.out.println("Error restaurando el backup");
         }
     }
-
     private static void crearBackup(Path rutaArchivoPrincipal, Path rutaRespaldoArchivoPrincipal) {
         try {
             Files.createDirectories(rutaRespaldoArchivoPrincipal.getParent());
@@ -191,7 +184,6 @@ public class prestamos {
             System.err.println("Error al crear la copia de seguridad...");
         }
     }
-
     private static String[] busquedaPorId(Scanner lector, List<String> lineasOriginales) {
         boolean encontrado = false;
         System.out.print("Introduce un ID: ");
@@ -216,7 +208,6 @@ public class prestamos {
 
         return camposDevolver;
     }
-
     private static List<String> obtenerListasOriginales(Path ruta) {
 
         List<String> lineasOriginales = new ArrayList<>();
@@ -227,7 +218,6 @@ public class prestamos {
         }
         return lineasOriginales;
     }
-
     public static void veficarSiExisteRuta(Path ruta) {
         // Compruebo si existe o no la ruta
         if (Files.notExists(ruta)) {
@@ -245,7 +235,6 @@ public class prestamos {
             }
         }
     }
-
     public static void mostrarTodos(List<String> lineasOriginales) {
 
         for (int i = 1; i < lineasOriginales.size(); i++) {
@@ -254,7 +243,6 @@ public class prestamos {
         }
 
     }
-
     public static void mostrarMenu() {
         System.out.println();
         System.out.println("1. Alta usuario");
@@ -268,3 +256,4 @@ public class prestamos {
     }
 
 }
+

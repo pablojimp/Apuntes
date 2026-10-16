@@ -1,90 +1,124 @@
-# Crea una aplicación de consola con un menú: 1) listar productos, 2) añadir
-# producto, 3) modificar stock, 4) buscar por nombre, 5) guardar en CSV, 0) salir.
-# Representa los productos con diccionarios dentro de una lista. Divide el programa
-# en funciones. Valida las entradas numéricas con try/except.
-
-# Comprobación
-
-# El menú debe repetirse con una condición explícita hasta elegir 0. Al guardar,
-# el CSV debe incluir todos los productos actuales.
-
 import csv
 
+
 def main():
+    productos = cargar_csv()
     ejecutar = True
     while ejecutar:
         opcion = pedir_opcion()
         if opcion == "0":
             ejecutar = False
-        elif opcion == "1":
-            listar_productos()       
-        elif opcion == "2":
-            aniadir_producto()
-        elif opcion == "3":
-            modificar_stock(input("Introduce el nombre del producto: "), int(input("Introduce el nuevo numero de stock")))
-        elif opcion == "4":
-            buscar_nombre(input("Introduce el nombre del producto: "))
-            
-def buscar_nombre(nombre):
-    # Leer todas las filas
-    with open('productos.csv', mode='r', newline='', encoding='utf-8') as archivo_csv:
-        lector_dict = csv.DictReader(archivo_csv)
-        for fila in lector_dict:
-            if nombre == fila["nombre"]:
-                print(fila)
 
-            
-        
+        elif opcion == "1":
+            listar_productos(productos)
+
+        elif opcion == "2":
+            aniadir_producto(productos)
+
+        elif opcion == "3":
+            modificar_stock(productos)
+
+        elif opcion == "4":
+            nombre = input("Introduce el nombre del producto: ")
+            producto = buscar_nombre(nombre, productos)
+            if producto is not None:
+                print(producto)
+            else:
+                print("Producto no encontrado.")
+
+        elif opcion == "5":
+            guardar_csv(productos)
+
+        else:
+            print("Opción no válida.")
+
+
 def pedir_opcion():
     opcion_menu = input("\n 1) Listar productos \n 2) Añadir producto \n 3) Modificar stock \n 4) Buscar por nombre \n 5) Guardar en CSV \n 0) Salir.\n Introducir opcion: ")
     return opcion_menu
-    
-def listar_productos():
-    with open("productos.csv", "r", newline="", encoding="utf-8") as fila_mostrar:
-        for fila in csv.DictReader(fila_mostrar):
-            print(fila)
- 
-def modificar_stock(nombre, nuevo_stock):
-    textos = []
 
-    # Leer todas las filas
-    with open('productos.csv', mode='r', newline='', encoding='utf-8') as archivo_csv:
-        lector_dict = csv.DictReader(archivo_csv)
 
-        for fila in lector_dict:
-            if nombre == fila["nombre"]:
-                fila["stock"] = nuevo_stock
+def pedir_entero(mensaje):
+    resultado = None
+    try:
+        numero = int(input(mensaje))
+        if numero < 0:
+            print("No puede ser negativo.")
+        else:
+            resultado = numero
+    except ValueError:
+        print("Debe ser un número entero.")
+    return resultado
 
-            textos.append(fila)
 
-    # Escribir todas las filas actualizadas
-    with open("productos.csv", "w", newline="", encoding="utf-8") as fila_escribir:
-        escritor = csv.DictWriter(
-            fila_escribir,
-            fieldnames=["nombre", "precio", "stock"]
-        )
+def pedir_decimal(mensaje):
+    resultado = None
+    try:
+        numero = float(input(mensaje))
+        if numero < 0:
+            print("No puede ser negativo.")
+        else:
+            resultado = numero
+    except ValueError:
+        print("Debe ser un número.")
+    return resultado
+
+
+def listar_productos(productos_db):
+    if len(productos_db) > 0:
+        for producto in productos_db:
+            print(producto)
+    else:
+        print("No hay productos.")
+
+
+def aniadir_producto(productos_db):
+    nombre = input("Introduce el nombre del producto: ")
+    precio = pedir_decimal("Introduce el precio del producto: ")
+    if precio is not None:
+        stock = pedir_entero("Introduce el stock del producto: ")
+        if stock is not None:
+            productos_db.append({"nombre": nombre, "precio": precio, "stock": stock})
+            print("Producto añadido.")
+
+
+def modificar_stock(productos_db):
+    nombre = input("Introduce el nombre del producto: ")
+    producto = buscar_nombre(nombre, productos_db)
+    if producto is not None:
+        nuevo_stock = pedir_entero("Introduce el nuevo número de stock: ")
+        if nuevo_stock is not None:
+            producto["stock"] = nuevo_stock
+            print("Stock modificado.")
+    else:
+        print("Producto no encontrado.")
+
+
+def buscar_nombre(nombre, productos_db):
+    encontrado = None
+    for producto in productos_db:
+        if producto["nombre"] == nombre:
+            encontrado = producto
+    return encontrado
+
+
+def guardar_csv(productos_db):
+    with open("productos.csv", "w", newline="", encoding="utf-8") as archivo:
+        escritor = csv.DictWriter(archivo, fieldnames=["nombre", "precio", "stock"])
         escritor.writeheader()
-        escritor.writerows(textos)
-                           
-def aniadir_producto():
-    textos = []
-    
-    # Leo todas las filas y las guardo en una variable
-    with open('productos.csv', mode='r', newline='', encoding='utf-8') as archivo_csv:
-        lector_dict = csv.DictReader(archivo_csv)
-        for fila in lector_dict:
-            textos.append(fila) 
-            
-            
-    # Añado la nueva linea
-    textos.append({"nombre": input("Introduce el nombre del producto: "), 
-                             "precio": int(input("Introduce el precio del producto: ")),
-                             "stock": int(input("Introduce el stock del producto: "))})
-            
-    # Reescribo el archivo productos.csv con la nueva linea 
-    with open("productos.csv", "w", newline="", encoding="utf-8") as fila_escribir:
-                escritor = csv.DictWriter(fila_escribir, fieldnames=["nombre", "precio", "stock"])
-                escritor.writeheader()
-                escritor.writerows(textos)
+        escritor.writerows(productos_db)
+    print("Productos guardados correctamente.")
+
+
+def cargar_csv():
+    productos_db = []
+    try:
+        with open("productos.csv", "r", newline="", encoding="utf-8") as archivo:
+            for fila in csv.DictReader(archivo):
+                productos_db.append({"nombre": fila["nombre"],"precio": float(fila["precio"]),"stock": int(fila["stock"])})
+    except FileNotFoundError:
+        print("Todavía no existe el archivo productos.csv.")
+    return productos_db
+
 
 main()
