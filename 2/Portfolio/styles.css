@@ -1,0 +1,24 @@
+body {
+    /* Elimina los márgenes predeterminados del navegador para que ocupe toda la pantalla */
+    margin: 0;
+    
+    /* Asegura que el fondo cubra al menos toda la altura de la ventana visible */
+    min-height: 100vh;
+    
+    /* 
+      Crea un degradado radial (como una cúpula celeste) imitando la luz del sol 
+      viniendo desde una esquina inferior/lateral (zona más cálida) 
+      hacia el cielo abierto más profundo.
+    */
+    background: radial-gradient(
+        circle at 10% 90%,          /* Posición del foco de luz: muy a la izquierda (10%) y abajo (90%), donde asoma la bruma dorada de la foto */
+        #fde68a 0%,                 /* Color inicial (el brillo cálido/amarillento muy suave del sol bajo en el horizonte) */
+        #fed7aa 15%,                /* Transición a un tono crema/anaranjado clarísimo muy difuso */
+        #bae6fd 45%,                /* Zona de transición intermedia: un azul celeste pálido y luminoso */
+        #93c5fd 70%,                /* Azul cielo natural de la parte media del cielo en la foto */
+        #60a5fa 100%                /* Azul superior (cenit): un tono ligeramente más intenso pero limpio */
+    );
+    
+    /* Fija el fondo para que no se repita ni se mueva al hacer scroll en la página */
+    background-attachment: fixed;
+}

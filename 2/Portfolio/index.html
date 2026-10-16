@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cielo Ambiental Decorado con Estrellas y Nubes</title>
+    <style>
+        :root {
+            --color-1: #fef3c7;
+            --color-2: #e0f2fe;
+            --color-3: #bae6fd;
+            --color-4: #7dd3fc;
+            --color-5: #38bdf8;
+
+            --opacidad-cielo-nocturno: 0;
+            --opacidad-estrellas: 0;
+            --opacidad-nubes: 0.8;
+            --brillo-nubes: 100%;
+            --color-texto: #0f172a;
+            --luz-farolas: 0;
+            --luces-ventanas: 0.2;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 30px;
+            overflow: hidden;
+
+            background: linear-gradient(to bottom,
+                    var(--color-5) 0%,
+                    var(--color-4) 35%,
+                    var(--color-3) 65%,
+                    var(--color-2) 85%,
+                    var(--color-1) 100%);
+
+            transition: background 0.1s linear;
+            font-family: system-ui, -apple-system, sans-serif;
+            position: relative;
+        }
+
+        /* Capa de estrellas para la noche */
+        #capa-estrellas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: var(--opacidad-estrellas);
+            transition: opacity 0.5s ease;
+        }
+
+        .estrella {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: titilar 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes titilar {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Contenedor de nubes aleatorias */
+        #capa-nubes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+            opacity: var(--opacidad-nubes);
+            filter: brightness(var(--brillo-nubes));
+            transition: opacity 0.3s ease, filter 0.3s ease;
+        }
+
+        .nube-aleatoria {
+            position: absolute;
+            background: url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=800&auto=format&fit=crop') no-repeat;
+            background-size: contain;
+            width: 250px;
+            height: 120px;
+            opacity: 0.45;
+            mix-blend-mode: screen;
+            animation: derivaNube linear infinite;
+        }
+
+        @keyframes derivaNube {
+            0% { transform: translateX(-300px); }
+            100% { transform: translateX(calc(100vw + 300px)); }
+        }
+
+        /* Silueta de la calle / edificios decorativos abajo */
+        .paisaje-urbano {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 140px;
+            pointer-events: none;
+            z-index: 4;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .edificio {
+            background: #090d16;
+            position: relative;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        /* Ventanas que se iluminan de noche */
+        .ventana {
+            position: absolute;
+            background: #fbbf24;
+            opacity: var(--luces-ventanas);
+            box-shadow: 0 0 6px #fbbf24;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Farolas de la calle */
+        .poste-farola {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 90px;
+            background: #1e293b;
+            z-index: 5;
+        }
+
+        .luz-farola {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(251,191,36,var(--luz-farolas)) 0%, rgba(251,191,36,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Capa oscura general para unificar atmósfera */
+        .capa-oscura {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* Texto ambiental dinámico */
+        .mensaje-dinamico {
+            position: absolute;
+            top: 20%;
+            font-size: 26px;
+            font-weight: 800;
+            text-align: center;
+            z-index: 6;
+            color: var(--color-texto);
+            text-shadow: 0 2px 12px rgba(255, 255, 255, 0.4);
+            transition: color 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        /* Panel de control */
+        .panel-control {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            padding: 20px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+            text-align: center;
+            width: 340px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .caja-reloj {
+            background: #1e293b;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #slider-hora {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        .controles-velocidad {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .btn-vel {
+            flex: 1;
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-vel:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-vel.activo {
+            background: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="capa-oscura"></div>
+
+    <!-- Contenedor de estrellas generado por JS -->
+    <div id="capa-estrellas"></div>
+
+    <!-- Contenedor de nubes aleatorias generado por JS -->
+    <div id="capa-nubes"></div>
+
+    <!-- Texto de prueba dinámico -->
+    <div id="texto-dinamico" class="mensaje-dinamico">Vista de Calle Atmosférica</div>
+
+    <!-- Silueta decorativa de la ciudad con farola -->
+    <div class="paisaje-urbano">
+        <div class="edificio" style="width: 25%; height: 90px;">
+            <div class="ventana" style="top: 15px; left: 20px; width: 12px; height: 18px;"></div>
+            <div class="ventana" style="top: 15px; left: 50px; width: 12px; height: 18px;"></div>
+            <div class="ventana" style="top: 45px; left: 20px; width: 12px; height: 18px;"></div>
+            <div class="ventana" style="top: 45px; left: 50px; width: 12px; height: 18px;"></div>
+        </div>
+        <div class="edificio" style="width: 30%; height: 130px;">
+            <div class="ventana" style="top: 20px; left: 30px; width: 15px; height: 22px;"></div>
+            <div class="ventana" style="top: 20px; left: 70px; width: 15px; height: 22px;"></div>
+            <div class="ventana" style="top: 60px; left: 30px; width: 15px; height: 22px;"></div>
+            <div class="ventana" style="top: 60px; left: 70px; width: 15px; height: 22px;"></div>
+        </div>
+        <!-- Elemento de Farola -->
+        <div style="width: 10%; height: 100px; position: relative;">
+            <div class="poste-farola"></div>
+            <div class="luz-farola" id="luz-farola"></div>
+        </div>
+        <div class="edificio" style="width: 35%; height: 110px;">
+            <div class="ventana" style="top: 25px; left: 40px; width: 14px; height: 20px;"></div>
+            <div class="ventana" style="top: 25px; left: 80px; width: 14px; height: 20px;"></div>
+            <div class="ventana" style="top: 65px; left: 40px; width: 14px; height: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Panel de control flotante -->
+    <div class="panel-control">
+        <div id="texto-hora" class="caja-reloj">12:00 PM</div>
+        <input type="range" id="slider-hora" min="0" max="24" step="0.001" value="12">
+        <div class="controles-velocidad">
+            <button class="btn-vel activo" data-vel="1">1x</button>
+            <button class="btn-vel" data-vel="2">2x</button>
+            <button class="btn-vel" data-vel="4">4x</button>
+            <button class="btn-vel" data-vel="8">8x</button>
+            <button class="btn-vel" data-vel="100">100x</button>
+            <button class="btn-vel" data-vel="1000">1000x</button>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('slider-hora');
+        const textoHora = document.getElementById('texto-hora');
+        const rootStyle = document.documentElement.style;
+        const botonesVel = document.querySelectorAll('.btn-vel');
+        const capaEstrellas = document.getElementById('capa-estrellas');
+        const capaNubes = document.getElementById('capa-nubes');
+
+        let velocidad = 1;
+        let modoManual = false;
+
+        // Generar Estrellas aleatorias en el DOM
+        for (let i = 0; i < 70; i++) {
+            const estrella = document.createElement('div');
+            estrella.className = 'estrella';
+            estrella.style.top = `${Math.random() * 80}%`;
+            estrella.style.left = `${Math.random() * 100}%`;
+            const tamano = Math.random() * 3 + 1;
+            estrella.style.width = `${tamano}px`;
+            estrella.style.height = `${tamano}px`;
+            estrella.style.animationDuration = `${Math.random() * 3 + 1}s`;
+            estrella.style.animationDelay = `${Math.random() * 3}s`;
+            capaEstrellas.appendChild(estrella);
+        }
+
+        // Generar Nubes aleatorias con movimiento independiente de izquierda a derecha
+        for (let i = 0; i < 6; i++) {
+            const nube = document.createElement('div');
+            nube.className = 'nube-aleatoria';
+            nube.style.top = `${Math.random() * 45}%`;
+            nube.style.animationDuration = `${Math.random() * 50 + 40}s`;
+            nube.style.animationDelay = `-${Math.random() * 50}s`;
+            nube.style.transform = `scale(${Math.random() * 0.5 + 0.6})`;
+            capaNubes.appendChild(nube);
+        }
+
+        const cicloCielo = [
+            { hora: 0,    c1: '#020617', c2: '#050816', c3: '#0b1026', c4: '#0f172a', c5: '#020617' },
+            { hora: 3,    c1: '#040714', c2: '#070b1e', c3: '#0a1028', c4: '#0c1430', c5: '#01030d' },
+            { hora: 6.5,  c1: '#312e81', c2: '#4c1d95', c3: '#1e1b4b', c4: '#0f172a', c5: '#020617' },
+            { hora: 7.75, c1: '#fdba74', c2: '#f9a8d4', c3: '#c4b5fd', c4: '#6366f1', c5: '#1e3a8a' },
+            { hora: 9,    c1: '#fef3c7', c2: '#bae6fd', c3: '#7dd3fc', c4: '#38bdf8', c5: '#0284c7' },
+            { hora: 11,   c1: '#f0f9ff', c2: '#e0f2fe', c3: '#7dd3fc', c4: '#0ea5e9', c5: '#0369a1' },
+            { hora: 14,   c1: '#f8fafc', c2: '#bae6fd', c3: '#38bdf8', c4: '#0ea5e9', c5: '#0369a1' },
+            { hora: 17,   c1: '#fef08a', c2: '#bae6fd', c3: '#7dd3fc', c4: '#38bdf8', c5: '#0284c7' },
+            { hora: 19,   c1: '#fde047', c2: '#fb923c', c3: '#7dd3fc', c4: '#0ea5e9', c5: '#1e3a8a' },
+            { hora: 20.25,c1: '#f97316', c2: '#f472b6', c3: '#a78bfa', c4: '#4338ca', c5: '#1e1b4b' },
+            { hora: 21.5, c1: '#581c87', c2: '#312e81', c3: '#1e1b4b', c4: '#0f172a', c5: '#020617' }
+        ];
+
+        const hexARgb = (hex) => {
+            const n = parseInt(hex.slice(1), 16);
+            return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+        };
+
+        const rgbAHex = ([r, g, b]) =>
+            '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        const lerpColor = (h1, h2, t) => {
+            const a = hexARgb(h1), b = hexARgb(h2);
+            return rgbAHex(a.map((v, i) => lerp(v, b[i], t)));
+        };
+
+        function cieloEnHora(hora) {
+            const h = ((hora % 24) + 24) % 24;
+            const n = cicloCielo.length;
+
+            let i = n - 1;
+            for (let k = 0; k < n; k++) {
+                if (cicloCielo[k].hora <= h) i = k;
+            }
+            const a = cicloCielo[i];
+            const b = cicloCielo[(i + 1) % n];
+
+            const fin = b.hora > a.hora ? b.hora : b.hora + 24;
+            const actual = h >= a.hora ? h : h + 24;
+            const t = (actual - a.hora) / (fin - a.hora);
+
+            const estado = {};
+            for (const c of ['c1', 'c2', 'c3', 'c4', 'c5']) {
+                estado[c] = lerpColor(a[c], b[c], t);
+            }
+            return estado;
+        }
+
+        function actualizarCielo(horaDecimal) {
+            const cielo = cieloEnHora(horaDecimal);
+
+            rootStyle.setProperty('--color-1', cielo.c1);
+            rootStyle.setProperty('--color-2', cielo.c2);
+            rootStyle.setProperty('--color-3', cielo.c3);
+            rootStyle.setProperty('--color-4', cielo.c4);
+            rootStyle.setProperty('--color-5', cielo.c5);
+
+            // Control de elementos nocturnos y diurnos
+            let opacidadEstrellas = 0;
+            let factorNubes = 0.8;
+            let intensidadFarolas = 0;
+            let opacidadVentanas = 0.2;
+            let colorTexto = '#0f172a';
+
+            if (horaDecimal < 6 || horaDecimal > 20.5) {
+                // Noche profunda
+                opacidadEstrellas = 1;
+                factorNubes = 0.25;
+                intensidadFarolas = 1;
+                opacidadVentanas = 0.95;
+                colorTexto = '#f8fafc';
+            } else if (horaDecimal >= 6 && horaDecimal <= 8) {
+                // Amanecer
+                opacidadEstrellas = Math.max(0, 1 - (horaDecimal - 6) / 2);
+                factorNubes = 0.55;
+                intensidadFarolas = Math.max(0, 1 - (horaDecimal - 6) / 1.5);
+                opacidadVentanas = 0.3;
+                colorTexto = '#0f172a';
+            } else if (horaDecimal >= 19.5 && horaDecimal <= 20.5) {
+                // Atardecer
+                opacidadEstrellas = Math.min(1, (horaDecimal - 19.5));
+                factorNubes = 0.6;
+                intensidadFarolas = Math.min(1, (horaDecimal - 19.5) * 2);
+                opacidadVentanas = 0.8;
+                colorTexto = '#f8fafc';
+            }
+
+            rootStyle.setProperty('--opacidad-estrellas', opacidadEstrellas);
+            rootStyle.setProperty('--opacidad-nubes', factorNubes);
+            rootStyle.setProperty('--brillo-nubes', `${factorNubes * 120}%`);
+            rootStyle.setProperty('--luz-farolas', intensidadFarolas);
+            rootStyle.setProperty('--luces-ventanas', opacidadVentanas);
+            rootStyle.setProperty('--color-texto', colorTexto);
+
+            // Formato de reloj de 12 horas
+            let horas = Math.floor(horaDecimal);
+            let minutos = Math.round((horaDecimal - horas) * 60);
+
+            if (minutos === 60) {
+                horas = (horas + 1) % 24;
+                minutos = 0;
+            }
+
+            let minutosStr = minutos < 10 ? '0' + minutos : minutos;
+            let sufijo = horas >= 12 ? 'PM' : 'AM';
+            let hora12 = horas % 12;
+            hora12 = hora12 === 0 ? 12 : hora12;
+
+            if (textoHora) {
+                textoHora.textContent = `${hora12}:${minutosStr} ${sufijo}`;
+            }
+        }
+
+        // Inicialización con hora del sistema
+        const ahora = new Date();
+        let horaActual = ahora.getHours() + ahora.getMinutes() / 60 + ahora.getSeconds() / 3600;
+        slider.value = horaActual;
+        actualizarCielo(horaActual);
+
+        slider.addEventListener('input', (e) => {
+            modoManual = true;
+            horaActual = parseFloat(e.target.value);
+            actualizarCielo(horaActual);
+        });
+
+        botonesVel.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                botonesVel.forEach(b => b.classList.remove('activo'));
+                e.target.classList.add('activo');
+                velocidad = parseFloat(e.target.dataset.vel);
+                modoManual = false;
+            });
+        });
+
+        let ultimoFrame = performance.now();
+
+        function bucle(timestamp) {
+            const delta = (timestamp - ultimoFrame) / 1000;
+            ultimoFrame = timestamp;
+
+            if (!modoManual && velocidad > 0) {
+                horaActual = (horaActual + (delta * velocidad) / 3600) % 24;
+                slider.value = horaActual;
+                actualizarCielo(horaActual);
+            }
+
+            requestAnimationFrame(bucle);
+        }
+
+        requestAnimationFrame(bucle);
+    </script>
+</body>
+
+</html>
