@@ -1,0 +1,5 @@
+BASE DE PRÁCTICA - NO CONTIENE SOLUCIÓN
+
+Consulta el ejercicio correspondiente del PDF de Python.
+Algunos CSV contienen datos iniciales ficticios y otros solo cabeceras. Puedes adaptar su formato manteniendo coherencia con el enunciado.
+No utilizar print() ni input() fuera de main().
