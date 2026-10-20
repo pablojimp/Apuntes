@@ -15,5 +15,6 @@ class Carta:
 class Coleccion:
     def __init__(self, diccionario_cartas=None):
         if diccionario_cartas is None:
-            diccionario_cartas = {}
+            diccionario_cartas = []
         self.diccionario_cartas = diccionario_cartas
+        
