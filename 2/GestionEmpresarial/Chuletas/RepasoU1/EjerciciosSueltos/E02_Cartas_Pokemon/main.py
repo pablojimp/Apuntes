@@ -1,64 +1,100 @@
-"""Punto de entrada. Completa el ejercicio siguiendo el PDF."""
-
-
+"""Punto de entrada. Colección de cartas Pokémon: intercambios.
+Toda la interacción (print/input) vive aquí."""
 from pathlib import Path
-import modelos
-import persistencia
-def menu(mesaje_mostrar):
-    print(mesaje_mostrar)
-    opcion = input('Opción: ').strip()
-    return opcion
 
-def mostrar_datos(datos):
-    for objeto in datos.diccionario_cartas:
-        print(objeto)
-        
-def buscar_carta_numero(datos,codigo):
-    existe = False
-    for carta in datos.diccionario_cartas:
-        if carta.codigo == codigo:
-            existe = True
-    return existe
+from modelos import Carta
+from persistencia import cargar, guardar
 
-    
-    
-def aniadir_carta(datos):
-    mensaje = ""
+RUTA = Path(__file__).parent / "cartas.csv"
 
-    numero = input(f"Introduce el codigo de la nueva carta ({CODIGO_CARTAS:02d}): ")
-    existe = buscar_carta_numero(datos, numero)
+MENU = """
+=== Cartas Pokémon ===
+1) Listar   2) Añadir   3) Eliminar   4) Buscar/filtrar
+5) Intercambiar   6) Estadísticas   7) Guardar   8) Top 3
+0) Salir"""
 
-    if existe:
-        mensaje = "La carta ya existe"
+
+def pedir_numero(texto, tipo):
+    try:
+        return tipo(input(texto).strip().replace(",", "."))
+    except ValueError:
+        print("Entrada no válida: introduce un número.")
+        return None
+
+
+def pedir_carta(codigo_texto="Código: "):
+    codigo = input(codigo_texto)
+    nombre = input("Nombre: ")
+    tipo = input("Tipo: ")
+    rareza = input("Rareza: ")
+    valor = pedir_numero("Valor (€): ", float)
+    if valor is None:
+        return None
+    return Carta(codigo, nombre, tipo, rareza, valor)
+
+
+def mostrar(cartas):
+    if not cartas:
+        print("(sin resultados)")
+    for c in cartas:
+        print(c)
+
+
+def anadir(col):
+    carta = pedir_carta()
+    if carta is not None:
+        print(col.anadir(carta)[1])
+
+
+def eliminar(col):
+    print(col.eliminar(input("Código a eliminar: "))[1])
+
+
+def buscar(col):
+    modo = input("Buscar por (1) nombre/tipo o (2) rareza: ").strip()
+    if modo == "1":
+        mostrar(col.buscar(input("Texto: ")))
+    elif modo == "2":
+        mostrar(col.filtrar_rareza(input("Rareza: ")))
     else:
-        nombre = input("Introduce el nombre de la nueva carta: ")
-        tipo = input(f"Introduce el tipo de {nombre}: ")
-        rareza = input(f"Introduce la rareza de {nombre}: ")
+        print("Opción no válida.")
 
-        try:
-            valor = int(input("Introduce el valor de la carta: "))
-            carta = modelos.Carta(numero, nombre, tipo, rareza, valor)
-            datos.diccionario_cartas.append(carta)
-            mensaje = "Carta añadida correctamente"
 
-        except ValueError:
-            mensaje = "El valor debe ser un número entero"
+def intercambiar(col):
+    antiguo = input("Código de la carta a entregar: ")
+    nueva = pedir_carta("Código de la carta nueva: ")
+    if nueva is not None:
+        print(col.intercambiar(antiguo, nueva)[1])
 
-    return mensaje
 
-CODIGO_CARTAS = "PK"    
-MENSAJE_MENU = "1) Listar \n2) Añadir \n3) Eliminar \n4) Buscar/filtrar \n5) Intercambiar \n6) Estadísticas \n7) Guardar \n0) Salir."
-ruta = Path(__file__).with_name('cartas.csv')
+def estadisticas(col):
+    print(f"Cartas: {col.total_cartas()} | Valor total: {col.valor_total():.2f} €")
+    for rareza, n in col.por_rareza().items():
+        print(f"  {rareza}: {n}")
+
+
+def guardar_datos(col):
+    guardar(RUTA, col)
+    print("Colección guardada.")
+
+
 def main():
-    ejecutar = True
-    datos_inciales = persistencia.cargar_csv_productos(ruta)
-    datos = datos_inciales
-    while ejecutar:
-        opcion_usuario = menu(MENSAJE_MENU)
-        if opcion_usuario == "1":
-            mostrar_datos(datos)
-        if opcion_usuario == "2":
-            print(aniadir_carta(datos))
+    col = cargar(RUTA)
+    acciones = {1: lambda c: mostrar(c.listar()), 2: anadir, 3: eliminar,
+                4: buscar, 5: intercambiar, 6: estadisticas, 7: guardar_datos,
+                8: lambda c: mostrar(c.top(3))}
+    opcion = -1
+    while opcion != 0:
+        print(MENU)
+        opcion = pedir_numero("Opción: ", int)
+        if opcion is None:
+            opcion = -1
+        elif opcion in acciones:
+            acciones[opcion](col)
+        elif opcion != 0:
+            print("Opción no válida.")
+    print("¡Hasta pronto!")
+
 
 if __name__ == "__main__":
     main()
