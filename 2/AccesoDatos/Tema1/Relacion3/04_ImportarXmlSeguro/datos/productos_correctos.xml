@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<productos>
+    <producto id="1"><nombre>Teclado</nombre><precio>59.90</precio><stock>8</stock></producto>
+    <producto id="2"><nombre>Ratón</nombre><precio>24.50</precio><stock>15</stock></producto>
+    <producto id="3"><nombre>Monitor</nombre><precio>219.00</precio><stock>4</stock></producto>
+</productos>

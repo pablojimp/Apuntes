@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<productos>
+    <producto id="1">
+        <nombre>Ratón óptico</nombre>
+        <precio>24.5</precio>
+        <stock>12</stock>
+    </producto>
+    <producto id="2">
+        <nombre>Teclado &amp; ratón</nombre>
+        <precio>69.9</precio>
+        <stock>7</stock>
+    </producto>
+    <producto id="3">
+        <nombre>Monitor</nombre>
+        <precio>199.0</precio>
+        <stock>5</stock>
+    </producto>
+    <producto id="4">
+        <nombre>Auriculares</nombre>
+        <precio>35.0</precio>
+        <stock>9</stock>
+    </producto>
+</productos>

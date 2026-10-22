@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<productos>
+    <producto id="1"><nombre>Teclado</nombre><precio>59.90</precio><stock>8</stock></producto>
+    <producto id="1"><nombre></nombre><precio>-5</precio><stock>abc</stock></producto>
+</productos>
