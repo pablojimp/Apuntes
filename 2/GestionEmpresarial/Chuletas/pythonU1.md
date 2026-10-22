@@ -618,9 +618,13 @@ def modificar_stock(productos, nombre, nuevo_stock):
     producto['stock'] = nuevo_stock
     return True
 
-def buscar_productos(productos, texto):
-    busqueda = texto.casefold()
-    return [p for p in productos if busqueda in p['nombre'].casefold()]
+    def buscar(self, texto):
+        texto = texto.lower()
+        bicis_coincidencias = []
+        for bici in self.bicicletas.values():
+            if bici.propietario.lower().find(texto) != -1 or bici.modelo.lower().find(texto) != -1:
+                bicis_coincidencias.append(bici)
+        return bicis_coincidencias
 
 def formatear_producto(numero, producto):
     return f"{numero}. {producto['nombre']} | {producto['precio']:.2f} EUR | Stock: {producto['stock']}"
