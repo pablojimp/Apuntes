@@ -1,119 +1,103 @@
-# TODO: Arregla la opcion 1,2 y 3 del ejercicio
+# Relación 11 - Ejercicio 03: Gestor de pedidos (programa principal)
+# Regla: todas las impresiones se hacen únicamente desde main().
+from modelos import Producto, Pedido
 
+
+def convertir_cantidad(texto):
+    """Devuelve una cantidad positiva o None si el dato es inválido."""
+    try:
+        cantidad = int(texto)
+    except ValueError:
+        return None
+    return cantidad if cantidad > 0 else None
+
+
+def convertir_indice(texto, total_productos):
+    """Devuelve el índice de producto (empezando en 0) o None."""
+    try:
+        indice = int(texto) - 1
+    except ValueError:
+        return None
+    return indice if 0 <= indice < total_productos else None
+
+
+def listar_productos(productos):
+    """Devuelve el listado de productos como líneas de texto."""
+    return [
+        f"{numero}. {producto.nombre} | {producto.precio:.2f} EUR | Stock: {producto.stock}"
+        for numero, producto in enumerate(productos, start=1)
+    ]
+
+
+def anadir_linea(pedido, productos, indice, cantidad):
+    """Intenta añadir una línea y devuelve True si hay stock suficiente."""
+    return pedido.agregar_linea(productos[indice], cantidad)
+
+
+def mostrar_pedido(pedido):
+    """Devuelve un listado de líneas; la impresión se hace en main()."""
+    if not pedido.lineas:
+        lineas = ["El pedido está vacío."]
+    else:
+        lineas = [f"Pedido de {pedido.cliente}:"]
+        for linea in pedido.lineas:
+            lineas.append(
+                f"{linea.producto.nombre} | {linea.cantidad} x "
+                f"{linea.producto.precio:.2f} = {linea.subtotal():.2f} EUR"
+            )
+    lineas.append(f"Total: {pedido.total():.2f} EUR")
+    return lineas
 
 
 def main():
-    productos = [Producto("Teclado", 25.0, 10), Producto("Ratón", 12.5, 5)]
-    pedidos = [Pedido(1)]
-    ejecutar = True
-    while ejecutar:
-        opcion = pedir_opcion()
-        if opcion == "0":
-            ejecutar = False
+    productos = [
+        Producto("Teclado", 25.50, 8),
+        Producto("Ratón", 12.75, 5),
+        Producto("Monitor", 149.99, 2),
+    ]
+    cliente = input("Nombre del cliente: ").strip()
+    pedido = Pedido(cliente)
+    opcion = ""
 
-        elif opcion == "1":
-            aniadirLinea(pedidos, productos)
+    while opcion != "0":
+        print("\n1) Ver productos y stock")
+        print("2) Añadir línea al pedido")
+        print("3) Listar detalle del pedido")
+        print("4) Calcular total")
+        print("0) Salir")
+        opcion = input("Opción: ").strip()
+
+        if opcion == "1":
+            for linea in listar_productos(productos):
+                print(linea)
 
         elif opcion == "2":
-            mostrarPedidos(pedidos)
+            for linea in listar_productos(productos):
+                print(linea)
+            indice = convertir_indice(input("Número de producto: "), len(productos))
+            if indice is None:
+                print("Producto no válido.")
+            else:
+                cantidad = None
+                while cantidad is None:
+                    cantidad = convertir_cantidad(input("Cantidad: "))
+                    if cantidad is None:
+                        print("Introduce una cantidad entera mayor que cero.")
+                if anadir_linea(pedido, productos, indice, cantidad):
+                    print("Línea añadida al pedido.")
+                else:
+                    print("No hay stock suficiente. No se ha añadido la línea.")
 
         elif opcion == "3":
-            calcularTotal(pedidos)
+            for linea in mostrar_pedido(pedido):
+                print(linea)
 
-        else:
+        elif opcion == "4":
+            print(f"Total: {pedido.total():.2f} EUR")
+
+        elif opcion != "0":
             print("Opción no válida.")
 
 
-def pedir_opcion():
-    opcion_menu = input("\n1) Añadir líneas a un pedido \n2) Listado detalle \n3) Calcular el total \n0) Salir.\nIntroducir opcion: ")
-    return opcion_menu
-
-
-def aniadirLinea(pedidos_db, productos_db):
-    
-    try:
-        id_pedido = int(input("Id del pedido: "))
-    except ValueError:
-        print("El id debe ser un número.")
-        return
-
-    pedido = busquedaPedido(id_pedido, pedidos_db)
-    if pedido is None:
-        print("Pedido no encontrado.")
-        return
-
-    nombre = input("Nombre del producto: ")
-    producto = busquedaProducto(nombre, productos_db)
-    if producto is None:
-        print("Producto no encontrado.")
-        return
-
-    try:
-        cantidad = int(input("Cantidad: "))
-    except ValueError:
-        print("La cantidad debe ser un número entero.")
-        return
-
-    if cantidad <= 0:
-        print("La cantidad debe ser mayor que 0.")
-    elif cantidad > producto.stock:
-        print(f"No hay suficiente stock (disponible: {producto.stock}).")
-    else:
-        producto.stock -= cantidad
-        pedido.lineas.append(LineaPedido(cantidad, producto))
-        print("Línea añadida correctamente.")
-
-
-def busquedaPedido(id_buscar, pedidos_db):
-    for pedido in pedidos_db:
-        if pedido.id == id_buscar:
-            return pedido
-
-
-def busquedaProducto(nombre, productos_db):
-    for producto in productos_db:
-        if producto.nombre == nombre:
-            return producto
-
-
-def mostrarPedidos(pedidos_db):
-    for pedido in pedidos_db:
-        print(f"Pedido {pedido.id}")
-        for linea in pedido.lineas:
-            print(f"{linea.producto.nombre} x{linea.cantidad} = {linea.subtotal()}€")
-
-
-def calcularTotal(pedidos_db):
-    for pedido in pedidos_db:
-        print(f"Pedido {pedido.id}: {pedido.total()}€")
-
-
-class Producto:
-    def __init__(self, nombre, precio, stock):
-        self.nombre = nombre
-        self.precio = precio
-        self.stock = stock
-
-
-class LineaPedido:
-    def __init__(self, cantidad, producto):
-        self.cantidad = cantidad
-        self.producto = producto
-
-    def subtotal(self):
-        return self.cantidad * self.producto.precio
-
-
-class Pedido:
-    def __init__(self, id):
-        self.id = id
-        self.lineas = []
-
-    def total(self):
-        total = 0
-        for linea in self.lineas:
-            total += linea.subtotal()
-        return total
-
-
-main()
+if __name__ == "__main__":
+    main()
